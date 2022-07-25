@@ -1,0 +1,3 @@
+displayName = Koko's dev tools
+author = Kokopai
+version = 0.1
