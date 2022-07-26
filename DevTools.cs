@@ -1,8 +1,12 @@
+global using static ImGuiNET.ImGui;
+
 using Terraria.ModLoader;
 
-namespace DevTools
+namespace DevTools;
+
+public class DevTools : Mod
 {
-	public class DevTools : Mod
+	public override void Load()
 	{
 	}
 }

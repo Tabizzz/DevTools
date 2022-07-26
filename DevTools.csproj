@@ -6,8 +6,17 @@
     <TargetFramework>net6.0</TargetFramework>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>latest</LangVersion>
+    <RepositoryUrl>https://github.com/Tabizzz/DevTools</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="ImGUI">
+      <HintPath>..\..\ModReader\ImGUI\ImGUI.dll</HintPath>
+    </Reference>
+    <Reference Include="ImGui.NET">
+      <HintPath>..\..\ModReader\ImGUI\lib\ImGuiNET.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
