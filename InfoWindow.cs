@@ -29,32 +29,6 @@ internal class InfoWindow : ModImGui
 	public override void BackgroundDraw(ImDrawListPtr drawList)
 	{
 		backs.ForEach(d=> d.Gui(drawList));
-		/*
-		foreach (var npc in Main.npc.SkipLast(1).Where(n=>n.active))
-		{
-			var rect = new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight);
-			
-			if (rect.Intersects(npc.getRect()))
-			{
-				var orig = npc.position - Main.screenPosition;
-				var end = orig + npc.Size;
-
-				drawList.AddRect(orig.Convert(), end.Convert(), Color.Yellow.PackedValue);
-				renderhitbox++;
-			}
-		}
-		foreach (var npc in Main.projectile.SkipLast(1).Where(n => n.active))
-		{
-			var rect = new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight);
-
-			if (rect.Intersects(npc.getRect()))
-			{
-				var orig = npc.position - Main.screenPosition;
-				var end = orig + npc.Size;
-				drawList.AddRect(orig.Convert(), end.Convert(), Color.Yellow.PackedValue);
-				renderhitbox++;
-			}
-		}*/
 	}
 
 	public override void ForeroundDraw(ImDrawListPtr drawList)

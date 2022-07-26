@@ -1,14 +1,11 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent;
 using ImGUI.Renderer;
-using ImGUI.Utils;
-using Terraria.GameContent.Bestiary;
-using System.Linq;
-using Terraria.DataStructures;
+using DevTools.Utils;
 using System;
 using Microsoft.Xna.Framework;
+using Terraria.Audio;
 
 namespace DevTools.Explorers;
 
@@ -20,6 +17,10 @@ public class NPCExplorer : IGui
 	private static int frame_timer;
 	public static bool open = false;
 	internal static bool has_hitbox;
+	private int current_add_buff = 1;
+	private int current_add_buff_time = 60;
+	private bool ignore_immune;
+	private ImVect2 imvect2;
 
 	public void Gui()
 	{
@@ -30,40 +31,175 @@ public class NPCExplorer : IGui
 		n =>
 		{
 			TabDescription(n);
+			TabDetails(n);
 			TabAI(n);
 			TabBuffs(n);
 			TabTexture(n);
+			TabSound(n);
 			EndTabBar();
 			has_hitbox = true;
 		},
+		2,
 		Buttons
 		);
+	}
+
+	private void TabDetails(NPC n)
+	{
+		if (BeginTabItem("Details"))
+		{
+			TextWrapped("base damage: ");
+			SameLine();
+			TextWrapped(n.defDamage.ToString());
+
+			InputInt("damage", ref n.damage);
+
+			TextWrapped("base defense: ");
+			SameLine();
+			TextWrapped(n.defDefense.ToString());
+
+			InputInt("defense", ref n.defense);
+
+			InputFloat("value", ref n.value);
+
+			InputInt("rarity", ref n.rarity);
+			SetNextItemWidth(CalcItemWidth() - 50);
+			InputFloat("knockBackResist", ref n.knockBackResist);
+
+			InputFloat("scale", ref n.scale);
+
+			Checkbox("townNPC", ref n.townNPC);
+
+			Checkbox("noGravity", ref n.noGravity);
+
+			InputFloat("npcSlots", ref n.npcSlots);
+
+			TextWrapped($"boss: {n.boss}");
+
+			Checkbox("netAlways", ref n.netAlways);
+
+			EndTabItem();
+		}
+	}
+
+	private void TabSound(NPC n)
+	{
+		if (BeginTabItem("Sounds"))
+		{
+			SoundStyle sound;
+			if(n.HitSound.HasValue)
+			{
+				sound = n.HitSound.Value;
+				ShowSoundStats(sound);
+			}
+			else
+			{
+				TextWrapped("npc dont have a HitSound");
+			}
+			Separator();
+			
+			if(n.DeathSound.HasValue)
+			{
+				sound = n.DeathSound.Value;
+				ShowSoundStats(sound);
+			}
+			else
+			{
+				TextWrapped("npc dont have a DeathSound");
+			}
+			EndTabItem();
+		}
+	}
+
+	private static void ShowSoundStats(SoundStyle sound)
+	{
+		var s = sound.Identifier?.ToString();
+		TextUnformatted("Identifier: ");
+		if (!string.IsNullOrWhiteSpace(s))
+		{
+			SameLine();
+			TextWrapped(s);
+		}
+
+		s = sound.SoundPath?.ToString();
+		TextUnformatted("SoundPath: ");
+		if (!string.IsNullOrWhiteSpace(s))
+		{
+			SameLine();
+			TextWrapped(s);
+		}
+
+		if (Button("Play"))
+		{
+			var old = sound.Volume;
+			sound.Volume = 1;
+			SoundEngine.PlaySound(sound);
+			sound.Volume = old;
+		}
 	}
 
 	private void TabBuffs(NPC n)
 	{
 		if (BeginTabItem("Buffs"))
 		{
-			for (int i = 0; i < n.buffType.Length; i++)
+			if(TreeNode("Add Buff"))
 			{
-				if(n.buffType[i] > 0)
+				InputInt("Buff ID", ref current_add_buff);
+				if (current_add_buff < 1) current_add_buff = 1;
+				if (current_add_buff >= BuffLoader.BuffCount) current_add_buff = BuffLoader.BuffCount - 1;
+				InputInt("Time", ref current_add_buff_time);
+				if (current_add_buff_time <= 0) current_add_buff_time = 1;
+				var tex = TextureBinder.buff[current_add_buff];
+				Image(tex.ptr, new ImVect2(20, 20));
+				SameLine();
+				TextWrapped(Lang.GetBuffName(current_add_buff));
+				TextWrapped(Lang.GetBuffDescription(current_add_buff).Replace("%", "%%"));
+				if (n.buffImmune[current_add_buff])
 				{
-					var tex = TextureBinder.buff[n.buffType[i]];
-					Image(tex.ptr, new ImVect2(20, 20));
-					SameLine();
-					var colo = Main.debuff[n.buffType[i]] ? Color.IndianRed.ToVector4() : Color.Green.ToVector4();
-					TextColored(colo.Convert() ,$"{Lang.GetBuffName(n.buffType[i])}({n.buffType[i]}):");
-					Indent();
-					TextWrapped(Lang.GetBuffDescription(n.buffType[i]));
-					TextWrapped($"Index: {i}");
-					TextWrapped($"Time: {n.buffTime[i]} ({MathF.Round(n.buffTime[i]/ 60f, 1):F1}s)");
-					if(Button("remove"))
-					{
-						n.buffTime[i] = 0;
-					}
-					Unindent();
-					Separator();
+					TextColored(Color.Red.ToVector4().Convert(), "npc is immune to this buff");
+					Checkbox("Ignore immune", ref ignore_immune);
+					if (ignore_immune)
+						n.buffImmune[current_add_buff] = false;
 				}
+				else
+				{
+					ignore_immune = false;
+				}
+				if((!n.buffImmune[current_add_buff] || ignore_immune) && Button("Add"))
+				{
+					n.AddBuff(current_add_buff, current_add_buff_time);
+				}
+				if(ignore_immune)
+				{
+					n.buffImmune[current_add_buff] = true;
+				}
+				TreePop();
+			}
+			if (TreeNode("Current Buffs"))
+			{
+				for (int i = 0; i < n.buffType.Length; i++)
+				{
+					if (n.buffType[i] > 0)
+					{
+
+						var tex = TextureBinder.buff[n.buffType[i]];
+						Image(tex.ptr, new ImVect2(20, 20));
+						SameLine();
+						var colo = Main.debuff[n.buffType[i]] ? Color.IndianRed.ToVector4() : Color.Green.ToVector4();
+						TextColored(colo.Convert(), $"{Lang.GetBuffName(n.buffType[i])}({n.buffType[i]}):");
+						Indent();
+						TextWrapped(Lang.GetBuffDescription(n.buffType[i]));
+						TextWrapped($"Index: {i}");
+						TextWrapped($"Time: {n.buffTime[i]} ({MathF.Round(n.buffTime[i] / 60f, 1):F1}s)");
+						if (Button("remove"))
+						{
+							n.buffTime[i] = 0;
+						}
+						Unindent();
+						Separator();
+					}
+				}
+				TreePop();
 			}
 			EndTabItem();
 		}
@@ -156,15 +292,33 @@ public class NPCExplorer : IGui
 			SameLine();
 			TextWrapped(n.netID.ToString());
 
-			TextWrapped("life: ");
+			SliderInt("life", ref n.life, 0, n.lifeMax, n.life + "/" + n.lifeMax);
+
+			imvect2 = n.position.Convert();			
+			InputFloat2("position", ref imvect2);
+			n.position = imvect2.Convert();
+
+			imvect2 = n.velocity.Convert();
+			InputFloat2("velocity", ref imvect2);
+			n.velocity = imvect2.Convert();
+
+
+			imvect2 = n.Size.Convert();
+			InputFloat2("Size (hitbox)", ref imvect2);
+			n.Size = imvect2.Convert();
+
+			TextWrapped("reallife: ");
 			SameLine();
-			TextWrapped(n.life + "/" + n.lifeMax);
+			TextWrapped(n.realLife.ToString());
+			if(n.realLife != -1)
+			{
+				if(Button("View"))
+				{
+					selected = n.realLife;
+				}
+			}
 
-			VectorWrapped("position", n.position);
 
-			VectorWrapped("velocity", n.velocity, true);
-
-			
 
 			EndTabItem();
 		}
@@ -183,6 +337,10 @@ public class NPCExplorer : IGui
 		if (Button("Teleport to"))
 		{
 			Main.player[Main.myPlayer].position = n.Center - new Vector2(0, Main.player[Main.myPlayer].Size.Y);
+		}
+		if (Button("Healt"))
+		{
+			n.life = n.lifeMax;
 		}
 		SameLine();
 		if (Button("Disable"))
