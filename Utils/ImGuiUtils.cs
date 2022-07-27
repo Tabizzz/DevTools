@@ -49,7 +49,7 @@ public class ImGuiUtils
 	{
 		int select = selected;
 		SetNextWindowSize(new ImVect2(500, 500), ImGuiCond.FirstUseEver);
-		if (Begin($"{name} Explorer", ref open, ImGuiWindowFlags.MenuBar))
+		if (Begin($"{name}", ref open, ImGuiWindowFlags.MenuBar))
 		{
 			if (BeginMenuBar())
 			{

@@ -25,7 +25,7 @@ public class NPCExplorer : IGui
 	public void Gui()
 	{
 		if (!open) return;
-		ImGuiUtils.SimpleLayout(ref open, ref Main.npc, "NPC", ref selected,
+		ImGuiUtils.SimpleLayout(ref open, ref Main.npc, "NPC Explorer", ref selected,
 		n => n.active,
 		n => n.GivenOrTypeName,
 		n =>
