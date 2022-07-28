@@ -1,1 +1,20 @@
-Koko's dev tools is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+Dev Tools:
+
+Dev tools is a mod designed for testing, it allows you to see information from the world and modify it, it currently has the following features:
+
+NPC Explorer:
+	See information about the npcs currently in the world, modify their life, hitbox and position, add buffs to them at any time and see their texture. 
+
+Item Editor:
+	Edit the stats of the items in your inventory! what you modify will be saved and the next time you load your character you will have the modified things, this functionality only works with the mod installed, that is, if you alter an item and go to a world that does not have the mod then your alterations will be deleted!
+
+World Info:
+	view world information like time and unlocked npcs.
+
+How to use:
+	Just open de debug window in ImGUI and check the "Koko's Dev Tools" section, the debug window can be open with a hotkey o in config.
+
+Notes: 
+	Currently the changes to the world and the npcs only works in singleplayer
+
+[url=https://github.com/Tabizzz/DevTools]Github[/url]

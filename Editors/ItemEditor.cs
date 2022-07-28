@@ -1,5 +1,6 @@
 ﻿using DevTools.Utils;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
@@ -14,6 +15,10 @@ internal class ItemEditor : IGui
 	public static bool open;
 	public static int selected;
 	private static Dictionary<int, List<FieldInfo>> fields = new();
+	private bool f_public = true;
+	private bool f_instance = true;
+	private bool f_private;
+	private bool f_static;
 
 	public void Gui()
 	{
@@ -26,6 +31,7 @@ internal class ItemEditor : IGui
 		{
 			TabDescription(i);
 			TabDetails(i);
+			TabFields(i);
 		},
 		1,
 		i =>
@@ -40,6 +46,39 @@ internal class ItemEditor : IGui
 				i.stack = 0;
 			}
 		});
+	}
+
+	private void TabFields(Item i)
+	{
+		if (BeginTabItem("Fields"))
+		{
+			TextWrapped("this is a class field editor, here you can see all the fields of the Item class, this tab is made for testing purposes only, what you change here will not be saved unless it is a property found in the other tabs");
+			BindingFlags flags = BindingFlags.Default;
+
+			if (Button("Options"))
+				OpenPopup("FieldOptions");
+
+			if(BeginPopup("FieldOptions"))
+			{
+				MenuItem("Public", null, ref f_public);
+				MenuItem("Private", null, ref f_private);
+				MenuItem("Instance", null, ref f_instance);
+				MenuItem("Static", null, ref f_static);
+				EndPopup();
+			}
+
+			if (f_public) flags |= BindingFlags.Public;
+			if (f_instance) flags |= BindingFlags.Instance;
+			if (f_private) flags |= BindingFlags.NonPublic;
+			if (f_static) flags |= BindingFlags.Static;
+
+			Separator();
+			foreach (var item in i.GetType().GetFields(flags))
+			{
+				ImGuiUtils.FieldEdit(item, i);
+			}
+			EndTabItem();
+		}
 	}
 
 	private void TabDetails(Item i)

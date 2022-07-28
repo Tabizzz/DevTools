@@ -1,10 +1,52 @@
 ﻿using ImGuiNET;
+using Microsoft.Xna.Framework;
 using System;
+using System.Reflection;
 
 namespace DevTools.Utils;
 
 public class ImGuiUtils
 {
+	public static readonly Type Float = typeof(float);
+	private static readonly Type Bool = typeof(bool);
+	private static readonly Type Int = typeof(int);
+
+	public static void FieldEdit(FieldInfo field, object target = null)
+	{
+		PushItemWidth(150);
+
+		if(field.IsInitOnly || field.IsLiteral)
+		{
+			TextWrapped(field.Name + ": " + field.GetValue(target));
+		}
+		else if(field.FieldType == Float)
+		{
+			var Ref = (float)field.GetValue(target);
+			InputFloat(field.Name, ref Ref);
+			field.SetValue(target, Ref);
+		}
+		else if (field.FieldType == Bool)
+		{
+			var Ref = (bool)field.GetValue(target);
+			Checkbox(field.Name, ref Ref);
+			field.SetValue(target, Ref);
+
+		}
+		else if (field.FieldType == Int)
+		{
+			var Ref = (int)field.GetValue(target);
+			InputInt(field.Name, ref Ref);
+			field.SetValue(target, Ref);
+
+		}
+		else
+		{
+			PopItemWidth();
+			TextWrapped(field.Name + ": " + field.GetValue(target));
+		}
+		
+	}
+
 	public static void Overlay(ref int corner, ref bool open, Action content)
 	{
 		var window_flags = ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoNav;
