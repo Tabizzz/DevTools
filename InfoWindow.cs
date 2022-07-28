@@ -10,6 +10,7 @@ internal class InfoWindow : ModImGui
 	public static List<IGui> guis = new();
 	public static List<IGui<ImDrawListPtr>> backs = new();
 	public static List<IGui<ImDrawListPtr>> fronts = new();
+	public static List<object> reports = new();
 
 	public override void DebugGUI()
 	{
@@ -18,7 +19,38 @@ internal class InfoWindow : ModImGui
 
 		debugs.ForEach(d=>d.Gui());
 
+		lock (reports)
+		{
+			if (Button("Clear Reports"))
+			{
+				reports.Clear();
+			}
+
+			foreach (var item in reports)
+			{
+				if(item is string str)
+				{
+					TextWrapped(str);
+				}
+				else if(item is int n)
+				{
+					if(n == 1)
+					{ Indent(); }
+					else if (n == -1)
+					{ Unindent(); }
+				}
+			}
+		}
+
 		EndChild();
+	}
+
+	public static void AddReport(object obj)
+	{
+		lock(reports)
+		{
+			reports.Add(obj);
+		}
 	}
 
 	public override void CustomGUI()

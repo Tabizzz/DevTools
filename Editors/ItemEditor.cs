@@ -19,6 +19,8 @@ internal class ItemEditor : IGui
 	private bool f_instance = true;
 	private bool f_private;
 	private bool f_static;
+	private bool f_editable = true;
+	private bool f_readonly;
 
 	public void Gui()
 	{
@@ -47,7 +49,7 @@ internal class ItemEditor : IGui
 			}
 		});
 	}
-
+	 
 	private void TabFields(Item i)
 	{
 		if (BeginTabItem("Fields"))
@@ -64,6 +66,8 @@ internal class ItemEditor : IGui
 				MenuItem("Private", null, ref f_private);
 				MenuItem("Instance", null, ref f_instance);
 				MenuItem("Static", null, ref f_static);
+				MenuItem("Editable", null, ref f_editable);
+				MenuItem("Readonly", null, ref f_readonly);
 				EndPopup();
 			}
 
@@ -75,7 +79,17 @@ internal class ItemEditor : IGui
 			Separator();
 			foreach (var item in i.GetType().GetFields(flags))
 			{
-				ImGuiUtils.FieldEdit(item, i);
+				var editable =
+					f_editable && 
+					(item.FieldType == ImGuiUtils.Bool || item.FieldType == ImGuiUtils.Int	|| item.FieldType == ImGuiUtils.Int) &&
+					!item.IsInitOnly && !item.IsLiteral;
+
+				var readon =
+					f_readonly &&
+					(item.IsInitOnly || item.IsLiteral);
+
+				if (editable || readon)
+ 				ImGuiUtils.FieldEdit(item, i);
 			}
 			EndTabItem();
 		}
@@ -200,9 +214,7 @@ internal class ItemEditor : IGui
 		var t = typeof(Item);
 		var descriptions = new List<FieldInfo>();
 
-		descriptions.Add(t.GetField("stack"));
 		descriptions.Add(t.GetField("uniqueStack"));
-		descriptions.Add(t.GetField("favorited"));
 		descriptions.Add(t.GetField("questItem"));
 		descriptions.Add(t.GetField("value"));
 		descriptions.Add(t.GetField("consumable"));
@@ -250,14 +262,15 @@ internal class ItemEditor : IGui
 		public override void LoadData(Item item, TagCompound tag)
 		{
 			var ie = tag.GetCompound("ItemEditor");
+
 			foreach (var list in fields)
 			{
 				foreach (var field in list.Value)
 				{
 					var name = field.Name;
 					if(ie.ContainsKey(name))
-					{
-						if(field.FieldType == typeof(float))
+					{						
+						if (field.FieldType == typeof(float))
 						{
 							field.SetValue(item, ie.GetFloat(name));
 						}

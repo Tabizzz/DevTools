@@ -7,9 +7,9 @@ namespace DevTools.Utils;
 
 public class ImGuiUtils
 {
-	public static readonly Type Float = typeof(float);
-	private static readonly Type Bool = typeof(bool);
-	private static readonly Type Int = typeof(int);
+	internal static readonly Type Float = typeof(float);
+	internal static readonly Type Bool = typeof(bool);
+	internal static readonly Type Int = typeof(int);
 
 	public static void FieldEdit(FieldInfo field, object target = null)
 	{
