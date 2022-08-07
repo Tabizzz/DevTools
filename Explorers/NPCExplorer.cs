@@ -6,6 +6,7 @@ using DevTools.Utils;
 using System;
 using Microsoft.Xna.Framework;
 using Terraria.Audio;
+using System.Reflection;
 
 namespace DevTools.Explorers;
 
@@ -21,6 +22,12 @@ public class NPCExplorer : IGui
 	private int current_add_buff_time = 60;
 	private bool ignore_immune;
 	private ImVect2 imvect2;
+	private bool f_public = true;
+	private bool f_private;
+	private bool f_instance = true;
+	private bool f_static;
+	private bool f_editable = true;
+	private bool f_readonly;
 
 	public void Gui()
 	{
@@ -36,12 +43,58 @@ public class NPCExplorer : IGui
 			TabBuffs(n);
 			TabTexture(n);
 			TabSound(n);
+			TabFields(n);
 			EndTabBar();
 			has_hitbox = true;
 		},
 		2,
 		Buttons
 		);
+	}
+
+	private void TabFields(NPC i)
+	{
+		if (BeginTabItem("Fields"))
+		{
+			TextWrapped("this is a class field editor, here you can see all the fields of the NPC class, this tab is made for testing purposes only, what you change here will not be saved unless it is a property found in the other tabs");
+			BindingFlags flags = BindingFlags.Default;
+
+			if (Button("Options"))
+				OpenPopup("FieldOptions");
+
+			if (BeginPopup("FieldOptions"))
+			{
+				MenuItem("Public", null, ref f_public);
+				MenuItem("Private", null, ref f_private);
+				MenuItem("Instance", null, ref f_instance);
+				MenuItem("Static", null, ref f_static);
+				MenuItem("Editable", null, ref f_editable);
+				MenuItem("Readonly", null, ref f_readonly);
+				EndPopup();
+			}
+
+			if (f_public) flags |= BindingFlags.Public;
+			if (f_instance) flags |= BindingFlags.Instance;
+			if (f_private) flags |= BindingFlags.NonPublic;
+			if (f_static) flags |= BindingFlags.Static;
+
+			Separator();
+			foreach (var item in i.GetType().GetFields(flags))
+			{
+				var editable =
+					f_editable &&
+					(item.FieldType == ImGuiUtils.Bool || item.FieldType == ImGuiUtils.Int || item.FieldType == ImGuiUtils.Int) &&
+					!item.IsInitOnly && !item.IsLiteral;
+
+				var readon =
+					f_readonly &&
+					(item.IsInitOnly || item.IsLiteral);
+
+				if (editable || readon)
+					ImGuiUtils.FieldEdit(item, i);
+			}
+			EndTabItem();
+		}
 	}
 
 	private void TabDetails(NPC n)
