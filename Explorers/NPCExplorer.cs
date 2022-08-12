@@ -4,60 +4,74 @@ using Terraria.ModLoader;
 using ImGUI.Renderer;
 using DevTools.Utils;
 using System;
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Terraria.Audio;
 using System.Reflection;
 
 namespace DevTools.Explorers;
 
-public class NPCExplorer : IGui
+public class NpcExplorer : IGui
 {
-	public static int selected = -1;
-	private static int npc_texture_frame = 1;
-	private static bool animate_npc_texture;
-	private static int frame_timer;
-	public static bool open = false;
-	internal static bool has_hitbox;
-	private int current_add_buff = 1;
-	private int current_add_buff_time = 60;
-	private bool ignore_immune;
-	private ImVect2 imvect2;
-	private bool f_public = true;
-	private bool f_private;
-	private bool f_instance = true;
-	private bool f_static;
-	private bool f_editable = true;
-	private bool f_readonly;
+	public static int Selected = -1;
+
+	static int _NpcTextureFrame = 1;
+
+	static bool _AnimateNpcTexture;
+
+	static int _FrameTimer;
+	public static bool Open;
+	internal static bool HasHitbox;
+
+	int current_add_buff = 1;
+
+	int current_add_buff_time = 60;
+
+	bool ignore_immune;
+
+	ImVect2 imvect2;
+
+	bool f_public = true;
+
+	bool f_private;
+
+	bool f_instance = true;
+
+	bool f_static;
+
+	bool f_editable = true;
+
+	bool f_readonly;
 
 	public void Gui()
 	{
-		if (!open) return;
-		ImGuiUtils.SimpleLayout(ref open, ref Main.npc, "NPC Explorer", ref selected,
+		if (!Open) return;
+		ImGuiUtils.SimpleLayout(ref Open, ref Main.npc, "NPC Explorer", ref Selected,
 		n => n.active,
 		n => n.GivenOrTypeName,
 		n =>
 		{
 			TabDescription(n);
 			TabDetails(n);
-			TabAI(n);
+			TabAi(n);
 			TabBuffs(n);
 			TabTexture(n);
 			TabSound(n);
 			TabFields(n);
 			EndTabBar();
-			has_hitbox = true;
+			HasHitbox = true;
 		},
 		2,
 		Buttons
 		);
 	}
 
-	private void TabFields(NPC i)
+	void TabFields(NPC i)
 	{
 		if (BeginTabItem("Fields"))
 		{
 			TextWrapped("this is a class field editor, here you can see all the fields of the NPC class, this tab is made for testing purposes only, what you change here will not be saved unless it is a property found in the other tabs");
-			BindingFlags flags = BindingFlags.Default;
+			var flags = BindingFlags.Default;
 
 			if (Button("Options"))
 				OpenPopup("FieldOptions");
@@ -97,7 +111,7 @@ public class NPCExplorer : IGui
 		}
 	}
 
-	private void TabDetails(NPC n)
+	void TabDetails(NPC n)
 	{
 		if (BeginTabItem("Details"))
 		{
@@ -135,7 +149,7 @@ public class NPCExplorer : IGui
 		}
 	}
 
-	private void TabSound(NPC n)
+	void TabSound(NPC n)
 	{
 		if (BeginTabItem("Sounds"))
 		{
@@ -164,9 +178,9 @@ public class NPCExplorer : IGui
 		}
 	}
 
-	private static void ShowSoundStats(SoundStyle sound)
+	static void ShowSoundStats(SoundStyle sound)
 	{
-		var s = sound.Identifier?.ToString();
+		var s = sound.Identifier;
 		TextUnformatted("Identifier: ");
 		if (!string.IsNullOrWhiteSpace(s))
 		{
@@ -174,7 +188,7 @@ public class NPCExplorer : IGui
 			TextWrapped(s);
 		}
 
-		s = sound.SoundPath?.ToString();
+		s = sound.SoundPath;
 		TextUnformatted("SoundPath: ");
 		if (!string.IsNullOrWhiteSpace(s))
 		{
@@ -191,7 +205,7 @@ public class NPCExplorer : IGui
 		}
 	}
 
-	private void TabBuffs(NPC n)
+	void TabBuffs(NPC n)
 	{
 		if (BeginTabItem("Buffs"))
 		{
@@ -230,7 +244,7 @@ public class NPCExplorer : IGui
 			}
 			if (TreeNode("Current Buffs"))
 			{
-				for (int i = 0; i < n.buffType.Length; i++)
+				for (var i = 0; i < n.buffType.Length; i++)
 				{
 					if (n.buffType[i] > 0)
 					{
@@ -258,26 +272,26 @@ public class NPCExplorer : IGui
 		}
 	}
 
-	private void TabTexture(NPC n)
+	void TabTexture(NPC n)
 	{
 		if (BeginTabItem("Texture"))
 		{
 			var texture = TextureBinder.npcs[n.type];
 
-			Image(texture.ptr, texture.Transform(100), texture.Uv0(npc_texture_frame), texture.Uv1(npc_texture_frame));
+			Image(texture.ptr, texture.Transform(100), texture.Uv0(_NpcTextureFrame), texture.Uv1(_NpcTextureFrame));
 			Separator();
-			SliderInt("Frame", ref npc_texture_frame, 1, texture.frames, $"{npc_texture_frame} / {texture.frames}");
-			Checkbox("Animate", ref animate_npc_texture);
-			if (animate_npc_texture)
+			SliderInt("Frame", ref _NpcTextureFrame, 1, texture.frames, $"{_NpcTextureFrame} / {texture.frames}");
+			Checkbox("Animate", ref _AnimateNpcTexture);
+			if (_AnimateNpcTexture)
 			{
-				frame_timer++;
-				if (frame_timer > 5)
+				_FrameTimer++;
+				if (_FrameTimer > 5)
 				{
-					frame_timer = 0;
-					npc_texture_frame++;
-					if (npc_texture_frame > texture.frames)
+					_FrameTimer = 0;
+					_NpcTextureFrame++;
+					if (_NpcTextureFrame > texture.frames)
 					{
-						npc_texture_frame = 1;
+						_NpcTextureFrame = 1;
 					}
 				}
 			}
@@ -285,7 +299,7 @@ public class NPCExplorer : IGui
 		}
 	}
 
-	private void TabAI(NPC n)
+	void TabAi(NPC n)
 	{
 		if (BeginTabItem("AI"))
 		{
@@ -300,11 +314,11 @@ public class NPCExplorer : IGui
 			TextWrapped("ai: ");
 			Indent();
 
-			for (int i = 0; i < n.ai.Length; i++)
+			for (var i = 0; i < n.ai.Length; i++)
 			{
 				TextWrapped($"ai[{i}]: ");
 				SameLine();
-				TextWrapped(n.ai[i].ToString());
+				TextWrapped(n.ai[i].ToString(CultureInfo.InvariantCulture));
 			}
 
 			Unindent();
@@ -325,7 +339,7 @@ public class NPCExplorer : IGui
 		}
 	}
 
-	private void TabDescription(NPC n)
+	void TabDescription(NPC n)
 	{
 		if (BeginTabItem("Description"))
 		{
@@ -367,7 +381,7 @@ public class NPCExplorer : IGui
 			{
 				if(Button("View"))
 				{
-					selected = n.realLife;
+					Selected = n.realLife;
 				}
 			}
 
@@ -377,13 +391,13 @@ public class NPCExplorer : IGui
 		}
 	}
 
-	private void Buttons(NPC n)
+	void Buttons(NPC n)
 	{
 		if (n.type != NPCID.TargetDummy)
 		{
 			if (Button("Teleport to you"))
 			{
-				NPCs.Move(n, Main.player[Main.myPlayer].Center - new Vector2(0, n.Size.Y));
+				NpCs.Move(n, Main.player[Main.myPlayer].Center - new Vector2(0, n.Size.Y));
 			}
 			SameLine();
 		}
@@ -393,7 +407,7 @@ public class NPCExplorer : IGui
 		}
 		if (Button("Healt"))
 		{
-			NPCs.Heal(n);
+			NpCs.Heal(n);
 		}
 		SameLine();
 		if (Button("Disable"))
@@ -404,11 +418,11 @@ public class NPCExplorer : IGui
 
 	public void Load(Mod mod)
 	{
-		InfoWindow.guis.Add(this);
+		InfoWindow.Guis.Add(this);
 	}
 
 	public void Unload()
 	{
-		InfoWindow.guis.Remove(this);
+		InfoWindow.Guis.Remove(this);
 	}
 }

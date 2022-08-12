@@ -7,11 +7,11 @@ namespace DevTools;
 
 internal class InfoWindow : ModImGui
 {
-	public static List<IGui> debugs = new();
-	public static List<IGui> guis = new();
-	public static List<IGui<ImDrawListPtr>> backs = new();
-	public static List<IGui<ImDrawListPtr>> fronts = new();
-	public static List<object> reports = new();
+	public static List<IGui> Debugs = new();
+	public static List<IGui> Guis = new();
+	public static List<IGui<ImDrawListPtr>> Backs = new();
+	public static List<IGui<ImDrawListPtr>> Fronts = new();
+	public static List<object> Reports = new();
 
 	public override void DebugGUI()
 	{
@@ -19,16 +19,16 @@ internal class InfoWindow : ModImGui
 		if (!BeginChild(Mod.Name)) return;
 		if (!CollapsingHeader(Mod.DisplayName)) return;
 
-		debugs.ForEach(d=>d.Gui());
+		Debugs.ForEach(d=>d.Gui());
 
-		lock (reports)
+		lock (Reports)
 		{
 			if (Button("Clear Reports"))
 			{
-				reports.Clear();
+				Reports.Clear();
 			}
 
-			foreach (var item in reports)
+			foreach (var item in Reports)
 			{
 				if(item is string str)
 				{
@@ -49,24 +49,24 @@ internal class InfoWindow : ModImGui
 
 	public static void AddReport(object obj)
 	{
-		lock(reports)
+		lock(Reports)
 		{
-			reports.Add(obj);
+			Reports.Add(obj);
 		}
 	}
 
 	public override void CustomGUI()
 	{
-		guis.ForEach(d => d.Gui());
+		Guis.ForEach(d => d.Gui());
 	}
 
 	public override void BackgroundDraw(ImDrawListPtr drawList)
 	{
-		backs.ForEach(d=> d.Gui(drawList));
+		Backs.ForEach(d=> d.Gui(drawList));
 	}
 
 	public override void ForeroundDraw(ImDrawListPtr drawList)
 	{
-		fronts.ForEach(d => d.Gui(drawList));
+		Fronts.ForEach(d => d.Gui(drawList));
 	}
 }

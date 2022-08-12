@@ -1,7 +1,5 @@
 ﻿using DevTools.CrossMod;
 using DevTools.Utils;
-using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
@@ -13,22 +11,29 @@ namespace DevTools.Editors;
 
 internal class ItemEditor : IGui
 {
-	public static bool open;
-	public static int selected;
-	private static Dictionary<int, List<FieldInfo>> fields = new();
-	private bool f_public = true;
-	private bool f_instance = true;
-	private bool f_private;
-	private bool f_static;
-	private bool f_editable = true;
-	private bool f_readonly;
+	public static bool Open;
+	public static int Selected;
+
+	static readonly Dictionary<int, List<FieldInfo>> Fields = new();
+
+	bool f_public = true;
+
+	bool f_instance = true;
+
+	bool f_private;
+
+	bool f_static;
+
+	bool f_editable = true;
+
+	bool f_readonly;
 
 	public void Gui()
 	{
-		if (!open || !HerosModCrossMod.ItemEditor) return;
+		if (!Open || !HerosModCrossMod.ItemEditor) return;
 		var p = Main.player[Main.myPlayer];
 		
-		ImGuiUtils.SimpleLayout(ref open, ref p.inventory, "Item Editor", ref selected,
+		ImGuiUtils.SimpleLayout(ref Open, ref p.inventory, "Item Editor", ref Selected,
 		i => !i.IsAir,
 		i => i.Name,
 		i =>
@@ -51,13 +56,13 @@ internal class ItemEditor : IGui
 			}
 		});
 	}
-	 
-	private void TabFields(Item i)
+
+	void TabFields(Item i)
 	{
 		if (BeginTabItem("Fields"))
 		{
 			TextWrapped("this is a class field editor, here you can see all the fields of the Item class, this tab is made for testing purposes only, what you change here will not be saved unless it is a property found in the other tabs");
-			BindingFlags flags = BindingFlags.Default;
+			var flags = BindingFlags.Default;
 
 			if (Button("Options"))
 				OpenPopup("FieldOptions");
@@ -91,13 +96,13 @@ internal class ItemEditor : IGui
 					(item.IsInitOnly || item.IsLiteral);
 
 				if (editable || readon)
- 				ImGuiUtils.FieldEdit(item, i);
+					ImGuiUtils.FieldEdit(item, i);
 			}
 			EndTabItem();
 		}
 	}
 
-	private void TabDetails(Item i)
+	void TabDetails(Item i)
 	{
 		if (BeginTabItem("Details"))
 		{
@@ -126,7 +131,7 @@ internal class ItemEditor : IGui
 		}
 	}
 
-	private void TabDescription(Item i)
+	void TabDescription(Item i)
 	{
 		if(BeginTabItem("Description"))
 		{
@@ -164,43 +169,44 @@ internal class ItemEditor : IGui
 			EndTabItem();
 		}
 	}
-	private static void GetAndPrintTooltips(Item item)
+	static void GetAndPrintTooltips(Item item)
 	{
 		if (TreeNode("Tooltips"))
 		{
-			Item hoverItem = item.Clone();
-			int yoyoLogo = -1;
-			int researchLine = -1;
+			var hoverItem = item.Clone();
+			var yoyoLogo = -1;
+			var researchLine = -1;
 			hoverItem.tooltipContext = 0;
-			float knockBack = hoverItem.knockBack;
-			float num = 1f;
+			var knockBack = hoverItem.knockBack;
+			var num = 1f;
 			if (hoverItem.CountsAsClass(DamageClass.Melee) && Main.player[Main.myPlayer].kbGlove)
 				num += 1f;
 
 			if (Main.player[Main.myPlayer].kbBuff)
 				num += 0.5f;
 
+			// ReSharper disable once CompareOfFloatsByEqualityOperator
 			if (num != 1f)
 				hoverItem.knockBack *= num;
 
 			if (hoverItem.CountsAsClass(DamageClass.Ranged) && Main.player[Main.myPlayer].shroomiteStealth)
 				hoverItem.knockBack *= 1f + (1f - Main.player[Main.myPlayer].stealth) * 0.5f;
 
-			int num2 = 30;
-			int numLines = 1;
-			string[] array = new string[num2];
-			bool[] array2 = new bool[num2];
-			bool[] array3 = new bool[num2];
-			for (int i = 0; i < num2; i++)
+			var num2 = 30;
+			var numLines = 1;
+			var array = new string[num2];
+			var array2 = new bool[num2];
+			var array3 = new bool[num2];
+			for (var i = 0; i < num2; i++)
 			{
 				array2[i] = false;
 				array3[i] = false;
 			}
-			string[] tooltipNames = new string[num2];
+			var tooltipNames = new string[num2];
 
 			Main.MouseText_DrawItemTooltip_GetLinesInfo(hoverItem, ref yoyoLogo, ref researchLine, knockBack, ref numLines, array, array2, array3, tooltipNames);
 
-			List<TooltipLine> lines = ItemLoader.ModifyTooltips(hoverItem, ref numLines, tooltipNames, ref array, ref array2, ref array3, ref yoyoLogo, out Color?[] _);
+			var lines = ItemLoader.ModifyTooltips(hoverItem, ref numLines, tooltipNames, ref array, ref array2, ref array3, ref yoyoLogo, out var _);
 			foreach (var line in lines)
 			{
 					TextWrapped(line.Text.Replace("%", "%%"));
@@ -228,7 +234,7 @@ internal class ItemEditor : IGui
 		descriptions.Add(t.GetField("expertOnly"));
 		descriptions.Add(t.GetField("mech"));
 
-		fields.Add(0, descriptions);
+		Fields.Add(0, descriptions);
 
 		var details = new List<FieldInfo>();
 
@@ -248,24 +254,24 @@ internal class ItemEditor : IGui
 		details.Add(t.GetField("crit"));
 
 
-		fields.Add(1, details);
+		Fields.Add(1, details);
 
-		InfoWindow.guis.Add(this);
+		InfoWindow.Guis.Add(this);
 	}
 
 	public void Unload()
 	{
-		InfoWindow.guis.Remove(this);
-		fields.Clear();
+		InfoWindow.Guis.Remove(this);
+		Fields.Clear();
 	}
 
-	private class ItemEditorGlobalItem : GlobalItem
+	class ItemEditorGlobalItem : GlobalItem
 	{
 		public override void LoadData(Item item, TagCompound tag)
 		{
 			var ie = tag.GetCompound("ItemEditor");
 
-			foreach (var list in fields)
+			foreach (var list in Fields)
 			{
 				foreach (var field in list.Value)
 				{
@@ -298,7 +304,7 @@ internal class ItemEditor : IGui
 			var ie = tag.GetCompound("ItemEditor");
 			var def = new Item(item.type);
 
-			foreach (var list in fields)
+			foreach (var list in Fields)
 			{
 				foreach (var field in list.Value)
 				{
@@ -313,7 +319,7 @@ internal class ItemEditor : IGui
 			tag.Set("ItemEditor", ie);
 		}
 
-		private void Save(TagCompound tag, string v, object damage1, object damage2)
+		void Save(TagCompound tag, string v, object damage1, object damage2)
 		{
 			if(!damage1.Equals(damage2))
 			{

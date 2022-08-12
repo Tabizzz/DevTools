@@ -2,6 +2,7 @@
 global using Vector2 = Microsoft.Xna.Framework.Vector2;
 global using ImVect2 = System.Numerics.Vector2;
 global using ImVect4 = System.Numerics.Vector4;
+using System.Globalization;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -41,24 +42,24 @@ internal static class Extensions
 
 	}
 
-	internal static void VectorWrapped(string v, Vector2 position, bool Length = false)
+	internal static void VectorWrapped(string v, Vector2 position, bool length = false)
 	{
 		TextWrapped($"{v}: ");
 		Indent();
 
 		TextWrapped("X: ");
 		SameLine();
-		TextWrapped(position.X.ToString());
+		TextWrapped(position.X.ToString(CultureInfo.InvariantCulture));
 
 		TextWrapped("Y: ");
 		SameLine();
-		TextWrapped(position.Y.ToString());
+		TextWrapped(position.Y.ToString(CultureInfo.InvariantCulture));
 
-		if (Length)
+		if (length)
 		{
 			TextWrapped("Length: ");
 			SameLine();
-			TextWrapped(position.Length().ToString());
+			TextWrapped(position.Length().ToString(CultureInfo.InvariantCulture));
 		}
 
 		Unindent();

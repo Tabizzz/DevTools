@@ -5,15 +5,15 @@ using Microsoft.Xna.Framework;
 
 namespace DevTools.Explorers;
 
-public class NPCExplorerSelector : IGui<ImDrawListPtr>
+public class NpcExplorerSelector : IGui<ImDrawListPtr>
 {
 
 	public void Gui(ImDrawListPtr drawList)
 	{
-		if(NPCExplorer.has_hitbox)
+		if(NpcExplorer.HasHitbox)
 		{
-			NPCExplorer.has_hitbox = false;
-			var npc = Main.npc[NPCExplorer.selected];
+			NpcExplorer.HasHitbox = false;
+			var npc = Main.npc[NpcExplorer.Selected];
 			drawList.AddHitBox(npc.getRect(), Color.Red, Color.Yellow);
 		}
 	
@@ -22,11 +22,11 @@ public class NPCExplorerSelector : IGui<ImDrawListPtr>
 
 	public void Load(Mod mod)
 	{
-		InfoWindow.fronts.Add(this);
+		InfoWindow.Fronts.Add(this);
 	}
 
 	public void Unload()
 	{
-		InfoWindow.fronts.Remove(this);
+		InfoWindow.Fronts.Remove(this);
 	}
 }

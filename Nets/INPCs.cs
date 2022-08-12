@@ -1,31 +1,29 @@
 ﻿using KokoLib;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
+namespace DevTools.Nets;
 
-namespace DevTools;
-
-public interface INPCs
+public interface INpCs
 {
 	void Move(NPC n, Vector2 vector2);
 	void Heal(NPC n);
 
-	private class Imp : ModHandler<INPCs>, INPCs
+	private class Imp : ModHandler<INpCs>, INpCs
 	{
-		public override INPCs Handler => this;
+		public override INpCs Handler => this;
 
 		public void Move(NPC n, Vector2 vector2)
 		{
 			n.position = vector2;
 			if(Main.netMode == NetmodeID.Server)
-				NPCs.Move(n, vector2);
+				NpCs.Move(n, vector2);
 		}
 
 		public void Heal(NPC n)
 		{
 			n.life = n.lifeMax;
 			if (Main.netMode == NetmodeID.Server)
-				NPCs.Heal(n);
+				NpCs.Heal(n);
 		}
 	}
 }

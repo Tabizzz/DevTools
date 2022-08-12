@@ -1,5 +1,4 @@
-﻿using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -8,35 +7,28 @@ namespace DevTools.CrossMod;
 internal class HerosModCrossMod : ILoadable
 {
 	public static bool HerosModAvaliable;
-	static Mod HerosMod;
+	static Mod _HerosMod;
 
-	static bool itemAdmin;
+	static bool _ItemAdmin;
 
 	public static bool ItemEditor => 
-		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && itemAdmin);
+		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && _ItemAdmin);
 
 	internal static void AddPermissions()
 	{
 		if (!HerosModAvaliable) return;
-		var a = false;
-		var b = (bool b) => { a = b; };
-		HerosMod.Call("AddPermission", "itemadminperm", "Item Admin", (Action<bool>)ChangeItemAdminPerm);
-	}
-
-	public static void ChangeItemAdminPerm(bool newperm)
-	{
-		itemAdmin = newperm;
+		_HerosMod.Call("AddPermission", "itemadminperm", "Item Admin", (bool b) => { _ItemAdmin = b; });
 	}
 
 	public void Load(Mod mod)
 	{
-		HerosModAvaliable = ModLoader.TryGetMod("HEROsMod", out HerosMod);
+		HerosModAvaliable = ModLoader.TryGetMod("HEROsMod", out _HerosMod);
 	}
 
 	public void Unload()
 	{
-		HerosMod = null;
+		_HerosMod = null;
 		HerosModAvaliable = false;
-		itemAdmin = false;
+		_ItemAdmin = false;
 	}
 }
