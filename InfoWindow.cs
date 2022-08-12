@@ -1,6 +1,7 @@
 ﻿using ImGUI;
 using ImGuiNET;
 using System.Collections.Generic;
+using Terraria;
 
 namespace DevTools;
 
@@ -14,6 +15,7 @@ internal class InfoWindow : ModImGui
 
 	public override void DebugGUI()
 	{
+		if (Main.gameMenu) return;
 		if (!BeginChild(Mod.Name)) return;
 		if (!CollapsingHeader(Mod.DisplayName)) return;
 

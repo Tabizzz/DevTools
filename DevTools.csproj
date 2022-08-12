@@ -18,5 +18,8 @@
     <Reference Include="ImGui.NET">
       <HintPath>..\..\ModReader\ImGUI\lib\ImGuiNET.dll</HintPath>
     </Reference>
+    <Reference Include="KokoLib">
+      <HintPath>..\..\ModReader\KokoLib\KokoLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
