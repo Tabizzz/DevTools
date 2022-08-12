@@ -1,4 +1,5 @@
-﻿using DevTools.Utils;
+﻿using DevTools.CrossMod;
+using DevTools.Utils;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -24,8 +25,9 @@ internal class ItemEditor : IGui
 
 	public void Gui()
 	{
-		if (!open) return;
+		if (!open || !HerosModCrossMod.ItemEditor) return;
 		var p = Main.player[Main.myPlayer];
+		
 		ImGuiUtils.SimpleLayout(ref open, ref p.inventory, "Item Editor", ref selected,
 		i => !i.IsAir,
 		i => i.Name,

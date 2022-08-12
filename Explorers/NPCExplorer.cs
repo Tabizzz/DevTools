@@ -383,7 +383,7 @@ public class NPCExplorer : IGui
 		{
 			if (Button("Teleport to you"))
 			{
-				n.position = Main.player[Main.myPlayer].Center - new Vector2(0, n.Size.Y);
+				NPCs.Move(n, Main.player[Main.myPlayer].Center - new Vector2(0, n.Size.Y));
 			}
 			SameLine();
 		}
@@ -393,7 +393,7 @@ public class NPCExplorer : IGui
 		}
 		if (Button("Healt"))
 		{
-			n.life = n.lifeMax;
+			NPCs.Heal(n);
 		}
 		SameLine();
 		if (Button("Disable"))
