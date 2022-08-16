@@ -1,5 +1,6 @@
 ﻿using DevTools.CrossMod;
 using DevTools.Editors;
+using Terraria;
 using Terraria.ModLoader;
 namespace DevTools.Debugs;
 
@@ -7,7 +8,7 @@ internal class Editors : IGui
 {
 	public void Gui()
 	{
-		if (!TreeNode("Editors"))	return;
+		if (Main.gameMenu || !TreeNode("Editors"))	return;
 
 		if (HerosModCrossMod.ItemEditor)
 			Checkbox("Item Editor", ref ItemEditor.Open);

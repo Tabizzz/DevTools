@@ -1,7 +1,8 @@
-﻿using ImGUI;
+﻿using DevTools.CrossMod;
+using ImGUI;
 using ImGuiNET;
 using System.Collections.Generic;
-using Terraria;
+using System.Diagnostics;
 
 namespace DevTools;
 
@@ -15,31 +16,37 @@ internal class InfoWindow : ModImGui
 
 	public override void DebugGUI()
 	{
-		if (Main.gameMenu) return;
 		if (!BeginChild(Mod.Name)) return;
 		if (!CollapsingHeader(Mod.DisplayName)) return;
 
 		Debugs.ForEach(d=>d.Gui());
 
-		lock (Reports)
-		{
-			if (Button("Clear Reports"))
-			{
-				Reports.Clear();
-			}
+		if (HerosModCrossMod.ServerLogs)
+			Checkbox("Server Logs", ref ServerAppLog.Open);
 
-			foreach (var item in Reports)
+		if (Debugger.IsAttached)
+		{
+			if(HerosModCrossMod.ServerLogs) SameLine();
+			lock (Reports)
 			{
-				if(item is string str)
+				if (Button("Clear Reports"))
 				{
-					TextWrapped(str);
+					Reports.Clear();
 				}
-				else if(item is int n)
+
+				foreach (var item in Reports)
 				{
-					if(n == 1)
-					{ Indent(); }
-					else if (n == -1)
-					{ Unindent(); }
+					if (item is string str)
+					{
+						TextWrapped(str);
+					}
+					else if (item is int n)
+					{
+						if (n == 1)
+						{ Indent(); }
+						else if (n == -1)
+						{ Unindent(); }
+					}
 				}
 			}
 		}

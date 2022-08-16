@@ -7,4 +7,5 @@ internal static class Nets
 {
 	public static INpCs NpCs => Net<INpCs>.Proxy;
 
+	public static IAppLog AppLogs => Net<IAppLog>.Proxy;
 }

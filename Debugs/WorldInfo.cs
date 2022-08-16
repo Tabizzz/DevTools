@@ -10,7 +10,7 @@ internal class WorldInfo : IGui
 
 	public void Gui()
 	{
-		if (!TreeNode("World Info")) return;
+		if (Main.gameMenu || !TreeNode("World Info")) return;
 
 		InputText("World name", ref Main.worldName, 100);
 
@@ -23,7 +23,7 @@ internal class WorldInfo : IGui
 		Indent();
 		Text("Update Count: " + Main.GameUpdateCount);
 		Text("Current Time: " + (Main.dayTime ? "Day" : "Night"));
-
+		
 		var ftime = (float)Main.time;
 		SliderFloat("Time: ", ref ftime, 0, Main.dayTime ? 54000 : 32400);
 		Main.time = ftime;

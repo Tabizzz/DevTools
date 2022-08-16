@@ -1,4 +1,5 @@
 ﻿using DevTools.Explorers;
+using Terraria;
 using Terraria.ModLoader;
 namespace DevTools.Debugs;
 
@@ -6,7 +7,7 @@ internal class Explorers : IGui
 {
 	public void Gui()
 	{
-		if (!TreeNode("Explorers"))	return;
+		if (Main.gameMenu || !TreeNode("Explorers"))	return;
 
 		Checkbox("NPC Explorer", ref NpcExplorer.Open);
 
