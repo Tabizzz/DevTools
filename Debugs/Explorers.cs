@@ -1,19 +1,17 @@
 ﻿using DevTools.CrossMod;
-using DevTools.Editors;
+using DevTools.Explorers;
 using Terraria;
 using Terraria.ModLoader;
 namespace DevTools.Debugs;
 
-internal class Editors : IGui
+internal class Explorers : IGui
 {
 	public void Gui()
 	{
-		if (Main.gameMenu || !TreeNode("Editors"))	return;
+		if (Main.gameMenu || !TreeNode("Explorers"))	return;
 
-		if (HerosModCrossMod.ItemEditor)
-			Checkbox("Item Editor", ref ItemEditor.Open);
-		else
-			TextWrapped("You don't have enough permissions to use Item Editor in this server.");
+		if(HerosModCrossMod.NpcExplorer)
+			Checkbox("NPC Explorer", ref NpcExplorer.Open);
 
 		TreePop();
 	}

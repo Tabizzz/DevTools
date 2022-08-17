@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DevTools.CrossMod;
+using System;
 using System.Runtime.InteropServices;
 using Terraria;
 using Terraria.ModLoader;
@@ -10,7 +11,7 @@ internal class WorldInfo : IGui
 
 	public void Gui()
 	{
-		if (Main.gameMenu || !TreeNode("World Info")) return;
+		if (Main.gameMenu || HerosModCrossMod.WorldInfo || !TreeNode("World Info")) return;
 
 		InputText("World name", ref Main.worldName, 100);
 

@@ -8,6 +8,7 @@ using System.Globalization;
 using Microsoft.Xna.Framework;
 using Terraria.Audio;
 using System.Reflection;
+using DevTools.CrossMod;
 
 namespace DevTools.Explorers;
 
@@ -17,7 +18,7 @@ public class NpcExplorer : IGui
 
 	static int _NpcTextureFrame = 1;
 
-	static bool _AnimateNpcTexture;
+	internal static bool AnimateNpcTexture;
 
 	static int _FrameTimer;
 	public static bool Open;
@@ -25,27 +26,28 @@ public class NpcExplorer : IGui
 
 	int current_add_buff = 1;
 
-	int current_add_buff_time = 60;
+	internal static int current_add_buff_time = 60;
 
 	bool ignore_immune;
 
 	ImVect2 imvect2;
 
-	bool f_public = true;
+	internal static bool f_public = true;
 
-	bool f_private;
+	internal static bool f_private;
 
-	bool f_instance = true;
+	internal static bool f_instance = true;
 
-	bool f_static;
+	internal static bool f_static;
 
-	bool f_editable = true;
+	internal static bool f_editable = true;
 
-	bool f_readonly;
+	internal static bool f_readonly;
 
 	public void Gui()
 	{
-		if (!Open) return;
+		if (Main.gameMenu || !Open || !HerosModCrossMod.NpcExplorer) return;
+
 		ImGuiUtils.SimpleLayout(ref Open, ref Main.npc, "NPC Explorer", ref Selected,
 		n => n.active,
 		n => n.GivenOrTypeName,
@@ -62,8 +64,14 @@ public class NpcExplorer : IGui
 			HasHitbox = true;
 		},
 		2,
-		Buttons
+		Buttons,
+		Options
 		);
+	}
+
+	private void Options()
+	{
+		MenuItem("Mark Selected", null, ref NpcExplorerSelector.NpcSelector);
 	}
 
 	void TabFields(NPC i)
@@ -281,8 +289,8 @@ public class NpcExplorer : IGui
 			Image(texture.ptr, texture.Transform(100), texture.Uv0(_NpcTextureFrame), texture.Uv1(_NpcTextureFrame));
 			Separator();
 			SliderInt("Frame", ref _NpcTextureFrame, 1, texture.frames, $"{_NpcTextureFrame} / {texture.frames}");
-			Checkbox("Animate", ref _AnimateNpcTexture);
-			if (_AnimateNpcTexture)
+			Checkbox("Animate", ref AnimateNpcTexture);
+			if (AnimateNpcTexture)
 			{
 				_FrameTimer++;
 				if (_FrameTimer > 5)

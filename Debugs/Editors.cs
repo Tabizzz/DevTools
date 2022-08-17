@@ -1,15 +1,17 @@
-﻿using DevTools.Explorers;
+﻿using DevTools.CrossMod;
+using DevTools.Editors;
 using Terraria;
 using Terraria.ModLoader;
 namespace DevTools.Debugs;
 
-internal class Explorers : IGui
+internal class Editors : IGui
 {
 	public void Gui()
 	{
-		if (Main.gameMenu || !TreeNode("Explorers"))	return;
+		if (Main.gameMenu || !TreeNode("Editors"))	return;
 
-		Checkbox("NPC Explorer", ref NpcExplorer.Open);
+		if (HerosModCrossMod.ItemEditor)
+			Checkbox("Item Editor", ref ItemEditor.Open);
 
 		TreePop();
 	}

@@ -1,5 +1,4 @@
-﻿global using static DevTools.Extensions;
-global using Vector2 = Microsoft.Xna.Framework.Vector2;
+﻿global using Vector2 = Microsoft.Xna.Framework.Vector2;
 global using ImVect2 = System.Numerics.Vector2;
 global using ImVect4 = System.Numerics.Vector4;
 using System.Globalization;

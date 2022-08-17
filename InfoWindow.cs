@@ -1,8 +1,11 @@
 ﻿using DevTools.CrossMod;
 using ImGUI;
 using ImGuiNET;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Terraria;
+using Terraria.ID;
 
 namespace DevTools;
 
@@ -18,6 +21,12 @@ internal class InfoWindow : ModImGui
 	{
 		if (!BeginChild(Mod.Name)) return;
 		if (!CollapsingHeader(Mod.DisplayName)) return;
+
+		if (!Main.gameMenu && Main.netMode == NetmodeID.MultiplayerClient && HerosModCrossMod.HerosModAvaliable)
+		{
+			TextColored(Color.Red.ToVector4().Convert(), "Heros Mod In Server");
+			TextWrapped("With heros mod on the server several features will not be available if you do not have sufficient permissions, remember to log in with heros mod.");
+		}
 
 		Debugs.ForEach(d=>d.Gui());
 

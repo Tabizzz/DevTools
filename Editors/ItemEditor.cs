@@ -1,6 +1,7 @@
 ﻿using DevTools.CrossMod;
 using DevTools.Utils;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -16,21 +17,21 @@ internal class ItemEditor : IGui
 
 	static readonly Dictionary<int, List<FieldInfo>> Fields = new();
 
-	bool f_public = true;
+	internal static bool f_public = true;
 
-	bool f_instance = true;
+	internal static bool f_instance = true;
 
-	bool f_private;
+	internal static bool f_private;
 
-	bool f_static;
+	internal static bool f_static;
 
-	bool f_editable = true;
+	internal static bool f_editable = true;
 
-	bool f_readonly;
+	internal static bool f_readonly;
 
 	public void Gui()
 	{
-		if (!Open || !HerosModCrossMod.ItemEditor) return;
+		if ( Main.gameMenu || !Open || !HerosModCrossMod.ItemEditor) return;
 		var p = Main.player[Main.myPlayer];
 		
 		ImGuiUtils.SimpleLayout(ref Open, ref p.inventory, "Item Editor", ref Selected,

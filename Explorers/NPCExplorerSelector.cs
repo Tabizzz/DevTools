@@ -7,16 +7,16 @@ namespace DevTools.Explorers;
 
 public class NpcExplorerSelector : IGui<ImDrawListPtr>
 {
-
+	public static bool NpcSelector = true;
 	public void Gui(ImDrawListPtr drawList)
 	{
-		if(NpcExplorer.HasHitbox)
+		if(NpcExplorer.HasHitbox && NpcSelector)
 		{
-			NpcExplorer.HasHitbox = false;
 			var npc = Main.npc[NpcExplorer.Selected];
 			drawList.AddHitBox(npc.getRect(), Color.Red, Color.Yellow);
 		}
-	
+		NpcExplorer.HasHitbox = false;
+
 	}
 
 

@@ -87,7 +87,7 @@ public class ImGuiUtils
 		End();
 	}
 
-	public static void SimpleLayout<T>(ref bool open, ref T[] npc, string name, ref int selected, Func<T, bool> active, Func<T, string> display, Action<T> tabs, int buttonLines, Action<T> buttons)
+	public static void SimpleLayout<T>(ref bool open, ref T[] npc, string name, ref int selected, Func<T, bool> active, Func<T, string> display, Action<T> tabs, int buttonLines, Action<T> buttons, Action Options = null)
 	{
 		SetNextWindowSize(new ImVect2(500, 500), ImGuiCond.FirstUseEver);
 		if (Begin($"{name}", ref open, ImGuiWindowFlags.MenuBar))
@@ -96,6 +96,8 @@ public class ImGuiUtils
 			{
 				if (BeginMenu("Options"))
 				{
+					if (Options != null) Options();
+
 					if (MenuItem("Close")) open = false;
 					EndMenu();
 				}

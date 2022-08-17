@@ -11,20 +11,35 @@ internal class HerosModCrossMod : ILoadable
 
 	public const string ItemEditorPermission = "devtools.itemeditor";
 	static bool _ItemAdmin;
+
+	public const string NpcExplorerPermission = "devtools.npcexplorer";
+	static bool _NpcExplorer;
+
 	public const string ServerLogPermission = "devtools.serverlog";
 	static bool _ServerLog;
+
+	public const string WorldInfoPermission = "devtools.worldinfo";
+	static bool _WorldInfo;
 
 	public static bool ItemEditor => 
 		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && _ItemAdmin);
 
+	public static bool NpcExplorer =>
+		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && _NpcExplorer);
+
 	public static bool ServerLogs =>
 		Main.netMode == NetmodeID.MultiplayerClient && (!HerosModAvaliable || (HerosModAvaliable && _ServerLog));
+
+	public static bool WorldInfo =>
+		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && _NpcExplorer);
 
 	internal static void AddPermissions()
 	{
 		if (!HerosModAvaliable) return;
 		HerosMod.Call("AddPermission", ItemEditorPermission, "Item Editor", (bool b) => { _ItemAdmin = b; });
 		HerosMod.Call("AddPermission", ServerLogPermission, "Server Logs", (bool b) => { _ServerLog = b; });
+		HerosMod.Call("AddPermission", NpcExplorerPermission, "Npc Explorer", (bool b) => { _NpcExplorer = b; });
+		HerosMod.Call("AddPermission", WorldInfoPermission, "World Info", (bool b) => { _WorldInfo = b; });
 	}
 
 	public void Load(Mod mod)
@@ -35,7 +50,9 @@ internal class HerosModCrossMod : ILoadable
 	public void Unload()
 	{
 		HerosMod = null;
-		HerosModAvaliable = false;
-		_ItemAdmin = false;
+		HerosModAvaliable =
+		_ItemAdmin =
+		_ServerLog =
+		_NpcExplorer = false;
 	}
 }
