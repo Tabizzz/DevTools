@@ -17,13 +17,23 @@ public class Preferences
 public class ToolsPref
 {
 	public TileFinderPref tileFinder { get; set; } = new();
+	public WorldInfoPref worldInfo { get; set; } = new();
+}
+
+public class WorldInfoPref
+{
+	public bool Open { get => WorldInfo.Open; set => WorldInfo.Open = value; }
 }
 
 public class TileFinderPref
 {
 	public bool Open { get => TileFinder.Open; set => TileFinder.Open = value; }
 	public bool closest { get => TileFinder.closest; set => TileFinder.closest = value; }
+	public bool TileFrameX { get => TileFinder.TileFrameX; set => TileFinder.TileFrameX = value; }
+	public bool TileFrameY { get => TileFinder.TileFrameY; set => TileFinder.TileFrameY = value; }
 	public int tileId { get => TileFinder.tileId; set => TileFinder.tileId = value; }
+	public int iTileFrameX { get => TileFinder.iTileFrameX; set => TileFinder.iTileFrameX = value; }
+	public int iTileFrameY { get => TileFinder.iTileFrameY; set => TileFinder.iTileFrameY = value; }
 }
 
 public class ExplorersPref

@@ -1,6 +1,7 @@
 ﻿using DevTools.CrossMod;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -16,10 +17,10 @@ internal class TileFinder : IGui
 	internal static long findTime;
 	internal static int findid;
 	internal static bool closest;
-	private bool TileFrameX;
-	private bool TileFrameY;
-	private int iTileFrameX;
-	private int iTileFrameY;
+	internal static bool TileFrameX;
+	internal static bool TileFrameY;
+	internal static int iTileFrameX;
+	internal static int iTileFrameY;
 	internal static Vector2 findStyle;
 
 	public void Gui()
@@ -39,12 +40,15 @@ internal class TileFinder : IGui
 		if (TileFrameX)
 		{
 			SameLine();
+			SetNextItemWidth(Math.Min(100, GetContentRegionAvail().X));
 			InputInt("Style", ref iTileFrameX);
 		}
 
 		Checkbox("Check Alternate", ref TileFrameY);
 		if (TileFrameY)
 		{
+			SameLine();
+			SetNextItemWidth(Math.Min(100, GetContentRegionAvail().X));
 			InputInt("Alternate", ref iTileFrameY);
 		}
 

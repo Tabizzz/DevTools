@@ -2,6 +2,7 @@
 using Terraria.ModLoader;
 using Terraria;
 using DevTools.Tools;
+using DevTools.CrossMod;
 
 internal class Tools : IGui
 {
@@ -11,7 +12,11 @@ internal class Tools : IGui
 
 		Checkbox("Hitboxes", ref Hitboxes.Open);
 
+		if(HerosModCrossMod.TileFinder)
 		Checkbox("Tile Finder", ref TileFinder.Open);
+
+		if (HerosModCrossMod.WorldInfo)
+			Checkbox("World Info", ref WorldInfo.Open);
 
 		TreePop();
 	}
