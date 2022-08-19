@@ -11,29 +11,56 @@ internal class TagViewer : IGui
 	public static bool Open;
 
 	private static TagCompound tag;
+	static bool needfocus;
 
 	public static void OpenTag(TagCompound tagcompound)
 	{
 		Open = true;
+		needfocus = true;
 		tag = tagcompound;
+		ConvertListToTag(tag);
+	}
+
+	private static void ConvertListToTag(TagCompound rtag)
+	{
+		foreach (var item in rtag)
+		{
+			if (item.Value is TagCompound sub)
+				ConvertListToTag(sub);
+			else if (item.Value is List<TagCompound> tags)
+			{
+				var subtag = new TagCompound();
+				var l = 0;
+				foreach (var subt in tags)
+				{
+					subtag.Add((l++).ToString(), subt);
+				}
+				rtag.Set(item.Key, subtag, true);
+			}
+		}
 	}
 
 	public static void OpenTag(IEnumerable<TagCompound> tagcompound, Func<TagCompound, string> nameSelector)
 	{
-		Open = true;
-		tag = new TagCompound();
+		var ttag = new TagCompound();
 		foreach (var sub in tagcompound)
 		{
 			tag.Add(nameSelector(sub), sub);
 		}
+		OpenTag(ttag);
 	}
 
 	public void Gui()
 	{
 		SetNextWindowSize(new ImVect2(430, 450), ImGuiCond.FirstUseEver);
+		if(needfocus)
+		{
+			needfocus = false;
+			SetNextWindowFocus();
+		}
+
 		if (!Open || !Begin("Tag Viewer", ref Open))
 		{
-			tag = null;
 			End();
 			return;
 		}
@@ -51,10 +78,7 @@ internal class TagViewer : IGui
 			{
 				foreach (var item in tag)
 				{
-					if (item.Value is TagCompound pairs)
-						ShowPlaceholder(item.Key, pairs);
-					else
-						ShowItem(item.Key, item.Value);
+					Show(item);
 				}
 				EndTable();
 			}
@@ -92,15 +116,20 @@ internal class TagViewer : IGui
 		{
 			foreach (var item in value)
 			{
-				if (item.Value is TagCompound pairs)
-					ShowPlaceholder(item.Key, pairs);
-				else
-					ShowItem(item.Key, item.Value);
+				Show(item);
 			}
 
 			TreePop();
 		}
 
+	}
+
+	private void Show(KeyValuePair<string, object> item)
+	{
+		if (item.Value is TagCompound pairs)
+			ShowPlaceholder(item.Key, pairs);
+		else
+			ShowItem(item.Key, item.Value);
 	}
 
 	public void Load(Mod mod)
@@ -112,4 +141,9 @@ internal class TagViewer : IGui
 	{
 		InfoWindow.Guis.Add(this);
 	}
+}
+
+class SavePreview : GlobalItem
+{
+
 }

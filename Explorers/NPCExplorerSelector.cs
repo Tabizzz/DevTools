@@ -16,9 +16,7 @@ public class NpcExplorerSelector : IGui<ImDrawListPtr>
 			drawList.AddHitBox(npc.getRect(), Color.Red, Color.Yellow);
 		}
 		NpcExplorer.HasHitbox = false;
-
 	}
-
 
 	public void Load(Mod mod)
 	{

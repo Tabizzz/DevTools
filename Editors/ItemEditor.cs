@@ -125,6 +125,13 @@ internal class ItemEditor : IGui
 				if(Button("Open in tag viewer"))
 					TagViewer.OpenTag(data, t => t.GetString("name"));
 			}
+			else if (global is SavePreview save)
+			{
+				var tag = ItemIO.Save(item);
+				TextWrapped("you can see what the item will save in tag viewer");
+				if (Button("Open in tag viewer"))
+					TagViewer.OpenTag(tag);
+			}
 			else
 			{
 				
