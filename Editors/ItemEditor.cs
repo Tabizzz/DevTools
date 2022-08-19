@@ -1,5 +1,7 @@
 ﻿using DevTools.CrossMod;
 using DevTools.Utils;
+using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +9,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ModLoader.Default;
+using DevTools.Tools;
 
 namespace DevTools.Editors;
 
@@ -14,6 +18,7 @@ internal class ItemEditor : IGui
 {
 	public static bool Open;
 	public static int Selected;
+	public static int Selected_global;
 
 	static readonly Dictionary<int, List<FieldInfo>> Fields = new();
 
@@ -41,6 +46,11 @@ internal class ItemEditor : IGui
 		{
 			TabDescription(i);
 			TabDetails(i);
+			if(i.ModItem is ModItem item)
+			{
+				TabModItem(item);
+			}
+			TabGlobals(i);
 			TabFields(i);
 		},
 		1,
@@ -56,6 +66,133 @@ internal class ItemEditor : IGui
 				i.stack = 0;
 			}
 		});
+	}
+
+	private void TabGlobals(Item item)
+	{
+		var l = item.Globals.Length;
+		if (l > 0 && BeginTabItem("Global Items"))
+		{
+			TextWrapped("Choose a global item to see");
+
+			if(BeginCombo("Global Item", item.Globals[Selected_global].Instance.Name))
+			{
+				for (int i = 0; i < l; i++)
+				{
+					var current = item.Globals[i].Instance;
+					if (Selectable(current.Name, i == Selected_global))
+						Selected_global = i;
+				}
+
+				EndCombo();
+			}
+			var global = item.Globals[Selected_global].Instance;
+
+			TextWrapped($"Global item from: {global.Mod.Name}");
+
+			
+			if (Selected_global < 0) Selected_global = 0;
+			if (Selected_global >= l) Selected_global = l - 1;
+
+			var flags = BindingFlags.Default;
+
+			if (Button("Options"))
+				OpenPopup("FieldOptions");
+
+			if (BeginPopup("FieldOptions"))
+			{
+				MenuItem("Public", null, ref f_public);
+				MenuItem("Private", null, ref f_private);
+				MenuItem("Instance", null, ref f_instance);
+				MenuItem("Static", null, ref f_static);
+				MenuItem("Editable", null, ref f_editable);
+				MenuItem("Readonly", null, ref f_readonly);
+				EndPopup();
+			}
+
+			if (f_public) flags |= BindingFlags.Public;
+			if (f_instance) flags |= BindingFlags.Instance;
+			if (f_private) flags |= BindingFlags.NonPublic;
+			if (f_static) flags |= BindingFlags.Static;
+
+			Separator();
+			var t = global.GetType();
+			if (global is UnloadedGlobalItem unloaded)
+			{
+				var data = (List<TagCompound>)t.GetField("data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(global);
+
+				TextWrapped("you can see the unloaded data in the tag viewer");
+				if(Button("Open in tag viewer"))
+					TagViewer.OpenTag(data, t => t.GetString("name"));
+			}
+			else
+			{
+				
+				foreach (var gitem in t.GetFields(flags))
+				{
+					var editable =
+						f_editable &&
+						(gitem.FieldType == ImGuiUtils.Bool || gitem.FieldType == ImGuiUtils.Int || gitem.FieldType == ImGuiUtils.Int) &&
+						!gitem.IsInitOnly && !gitem.IsLiteral;
+
+					var readon =
+						f_readonly &&
+						(gitem.IsInitOnly || gitem.IsLiteral);
+
+					if (editable || readon)
+						ImGuiUtils.FieldEdit(gitem, global);
+				}
+			}
+			
+			
+			EndTabItem();
+		}
+	}
+
+	private void TabModItem(ModItem mitem)
+	{
+		if (BeginTabItem("Mod Item"))
+		{
+			TextWrapped("this is a mod item field editor, here you can see all the fields of the ModItem class, this tab is made for testing purposes only, what you change here will not be saved unless it is a property found in the other tabs");
+			var flags = BindingFlags.Default;
+
+			if (Button("Options"))
+				OpenPopup("FieldOptions");
+
+			if (BeginPopup("FieldOptions"))
+			{
+				MenuItem("Public", null, ref f_public);
+				MenuItem("Private", null, ref f_private);
+				MenuItem("Instance", null, ref f_instance);
+				MenuItem("Static", null, ref f_static);
+				MenuItem("Editable", null, ref f_editable);
+				MenuItem("Readonly", null, ref f_readonly);
+				EndPopup();
+			}
+
+			if (f_public) flags |= BindingFlags.Public;
+			if (f_instance) flags |= BindingFlags.Instance;
+			if (f_private) flags |= BindingFlags.NonPublic;
+			if (f_static) flags |= BindingFlags.Static;			
+			
+			Separator();
+			var t = mitem.GetType();
+			foreach (var item in mitem.GetType().GetFields(flags))
+			{
+				var editable =
+					f_editable &&
+					(item.FieldType == ImGuiUtils.Bool || item.FieldType == ImGuiUtils.Int || item.FieldType == ImGuiUtils.Int) &&
+					!item.IsInitOnly && !item.IsLiteral;
+
+				var readon =
+					f_readonly &&
+					(item.IsInitOnly || item.IsLiteral);
+
+				if (editable || readon)
+					ImGuiUtils.FieldEdit(item, mitem);
+			}	
+			EndTabItem();
+		}
 	}
 
 	void TabFields(Item i)
@@ -164,8 +301,6 @@ internal class ItemEditor : IGui
 			TextWrapped("material: " + i.material);
 
 			GetAndPrintTooltips(i);
-
-			
 
 			EndTabItem();
 		}

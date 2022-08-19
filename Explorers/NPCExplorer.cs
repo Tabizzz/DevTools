@@ -420,7 +420,7 @@ public class NpcExplorer : IGui
 		SameLine();
 		if (Button("Disable"))
 		{
-			n.active = false;
+			Npcs.Disable(n);
 		}
 	}
 

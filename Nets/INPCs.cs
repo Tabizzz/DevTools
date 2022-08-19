@@ -7,6 +7,7 @@ public interface INpCs
 {
 	void Move(NPC n, Vector2 vector2);
 	void Heal(NPC n);
+	void Disable(NPC n);
 
 	private class Imp : ModHandler<INpCs>, INpCs
 	{
@@ -24,6 +25,13 @@ public interface INpCs
 			n.life = n.lifeMax;
 			if (Main.netMode == NetmodeID.Server)
 				Npcs.Heal(n);
+		}
+
+		public void Disable(NPC n)
+		{
+			n.active = false;
+			if (Main.netMode == NetmodeID.Server)
+				Npcs.Disable(n);
 		}
 	}
 }

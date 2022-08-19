@@ -73,14 +73,6 @@ internal class WorldInfo : IGui
 		Checkbox("TaxCollector", ref NPC.savedTaxCollector);
 		Checkbox("Wizard", ref NPC.savedWizard);
 		Unindent();
-		
-		Text("Down Bosses");
-		Indent();
-		Checkbox("Boss1", ref NPC.downedBoss1);
-		Checkbox("Boss2", ref NPC.downedBoss2);
-		Checkbox("Boss3", ref NPC.downedBoss3);
-
-		Unindent();
 
 		End();
 	}
