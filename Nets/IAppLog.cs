@@ -38,9 +38,9 @@ public interface IAppLog
 					canSend = (bool)HerosModCrossMod.HerosMod.Call("HasPermission", WhoAmI, HerosModCrossMod.ServerLogPermission);
 				}
 				if (canSend)
-					AppLogs.Logs(ServerAppLog.Logs.ToArray()[start..]);
+					AppLogNet.Logs(ServerAppLog.Logs.ToArray()[start..]);
 				else
-					AppLogs.Logs(new string[] { "You dont have permission to get server logs" });
+					AppLogNet.Logs(new string[] { "You dont have permission to get server logs" });
 			}
 		}
 	}

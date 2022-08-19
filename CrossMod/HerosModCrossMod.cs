@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -21,6 +22,9 @@ internal class HerosModCrossMod : ILoadable
 	public const string WorldInfoPermission = "devtools.worldinfo";
 	static bool _WorldInfo;
 
+	public const string TileFinderPermission = "devtools.tilefinder";
+	static bool _TileFinder;
+
 	public static bool ItemEditor => 
 		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && _ItemAdmin);
 
@@ -31,7 +35,10 @@ internal class HerosModCrossMod : ILoadable
 		Main.netMode == NetmodeID.MultiplayerClient && (!HerosModAvaliable || (HerosModAvaliable && _ServerLog));
 
 	public static bool WorldInfo =>
-		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && _NpcExplorer);
+		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && _WorldInfo);
+
+	public static bool TileFinder =>
+		Main.netMode == NetmodeID.SinglePlayer || !HerosModAvaliable || (HerosModAvaliable && _TileFinder);
 
 	internal static void AddPermissions()
 	{
@@ -40,6 +47,8 @@ internal class HerosModCrossMod : ILoadable
 		HerosMod.Call("AddPermission", ServerLogPermission, "Server Logs", (bool b) => { _ServerLog = b; });
 		HerosMod.Call("AddPermission", NpcExplorerPermission, "Npc Explorer", (bool b) => { _NpcExplorer = b; });
 		HerosMod.Call("AddPermission", WorldInfoPermission, "World Info", (bool b) => { _WorldInfo = b; });
+		HerosMod.Call("AddPermission", TileFinderPermission, "Tile Finder", (bool b) => { _TileFinder = b; });
+
 	}
 
 	public void Load(Mod mod)

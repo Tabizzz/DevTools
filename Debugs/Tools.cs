@@ -11,6 +11,8 @@ internal class Tools : IGui
 
 		Checkbox("Hitboxes", ref Hitboxes.Open);
 
+		Checkbox("Tile Finder", ref TileFinder.Open);
+
 		TreePop();
 	}
 

@@ -16,14 +16,14 @@ public interface INpCs
 		{
 			n.position = vector2;
 			if(Main.netMode == NetmodeID.Server)
-				NpCs.Move(n, vector2);
+				Npcs.Move(n, vector2);
 		}
 
 		public void Heal(NPC n)
 		{
 			n.life = n.lifeMax;
 			if (Main.netMode == NetmodeID.Server)
-				NpCs.Heal(n);
+				Npcs.Heal(n);
 		}
 	}
 }

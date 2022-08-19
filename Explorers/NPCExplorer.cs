@@ -405,7 +405,7 @@ public class NpcExplorer : IGui
 		{
 			if (Button("Teleport to you"))
 			{
-				NpCs.Move(n, Main.player[Main.myPlayer].Center - new Vector2(0, n.Size.Y));
+				Npcs.Move(n, Main.player[Main.myPlayer].Center - new Vector2(0, n.Size.Y));
 			}
 			SameLine();
 		}
@@ -415,7 +415,7 @@ public class NpcExplorer : IGui
 		}
 		if (Button("Healt"))
 		{
-			NpCs.Heal(n);
+			Npcs.Heal(n);
 		}
 		SameLine();
 		if (Button("Disable"))

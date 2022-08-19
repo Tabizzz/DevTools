@@ -11,7 +11,7 @@ internal class WorldInfo : IGui
 
 	public void Gui()
 	{
-		if (Main.gameMenu || HerosModCrossMod.WorldInfo || !TreeNode("World Info")) return;
+		if (Main.gameMenu || !HerosModCrossMod.WorldInfo || !TreeNode("World Info")) return;
 
 		InputText("World name", ref Main.worldName, 100);
 

@@ -65,7 +65,7 @@ internal class ServerAppLog : ModImGui
 
 		End();
 		if (getLog)
-			AppLogs.Request(position);
+			AppLogNet.Request(position);
 		
 	}
 }

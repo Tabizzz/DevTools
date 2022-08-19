@@ -11,6 +11,19 @@ public class Preferences
 	public HitboxesPref hitboxes { get; set; } = new();
 	public EditorsPref editors { get; set; } = new();
 	public ExplorersPref explorers { get; set; } = new();
+	public ToolsPref tools { get; set; } = new();
+}
+
+public class ToolsPref
+{
+	public TileFinderPref tileFinder { get; set; } = new();
+}
+
+public class TileFinderPref
+{
+	public bool Open { get => TileFinder.Open; set => TileFinder.Open = value; }
+	public bool closest { get => TileFinder.closest; set => TileFinder.closest = value; }
+	public int tileId { get => TileFinder.tileId; set => TileFinder.tileId = value; }
 }
 
 public class ExplorersPref
