@@ -1,9 +1,6 @@
 ﻿using DevTools.CrossMod;
 using DevTools.Utils;
-using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -184,20 +181,31 @@ internal class ItemEditor : IGui
 			
 			Separator();
 			var t = mitem.GetType();
-			foreach (var item in mitem.GetType().GetFields(flags))
+			if (mitem is UnloadedItem ui)
 			{
-				var editable =
-					f_editable &&
-					(item.FieldType == ImGuiUtils.Bool || item.FieldType == ImGuiUtils.Int || item.FieldType == ImGuiUtils.Int) &&
-					!item.IsInitOnly && !item.IsLiteral;
+				var data = (TagCompound)t.GetField("data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(mitem);
 
-				var readon =
-					f_readonly &&
-					(item.IsInitOnly || item.IsLiteral);
+				TextWrapped("you can see the unloaded data in the tag viewer");
+				if (Button("Open in tag viewer"))
+					TagViewer.OpenTag(data);
+			}
+			else
+			{
+				foreach (var item in t.GetFields(flags))
+				{
+					var editable =
+						f_editable &&
+						(item.FieldType == ImGuiUtils.Bool || item.FieldType == ImGuiUtils.Int || item.FieldType == ImGuiUtils.Int) &&
+						!item.IsInitOnly && !item.IsLiteral;
 
-				if (editable || readon)
-					ImGuiUtils.FieldEdit(item, mitem);
-			}	
+					var readon =
+						f_readonly &&
+						(item.IsInitOnly || item.IsLiteral);
+
+					if (editable || readon)
+						ImGuiUtils.FieldEdit(item, mitem);
+				}
+			}
 			EndTabItem();
 		}
 	}
