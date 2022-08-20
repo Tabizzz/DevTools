@@ -127,6 +127,7 @@ public class ImGuiUtils
 				if (BeginTabBar("##Tabs", ImGuiTabBarFlags.TabListPopupButton))
 				{
 					tabs(npc[select]);
+					EndTabBar();
 				}
 
 				EndChild();
