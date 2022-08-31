@@ -1,5 +1,6 @@
 ﻿global using static ImGuiNET.ImGui;
 using DevTools.CrossMod;
+using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using System.IO;
 using Terraria;
@@ -13,9 +14,12 @@ public class DevTools : Mod
 	public static readonly string PreferencePath = Path.Combine(PreferenceFolder, "devtools.json");
 	internal static DevTools Instance;
 
+	public static ModKeybind EntityCodeKey;
+
 	public override void Load()
 	{
 		Instance = this;
+		EntityCodeKey = KeybindLoader.RegisterKeybind(this, "Show entity code", Keys.F2);
 		if (!ImGUI.ImGUI.CanGui)
 		{
 			log4net.Config.BasicConfigurator.Configure(new ServerLogAppender());
@@ -43,6 +47,7 @@ public class DevTools : Mod
 	public override void Unload()
 	{
 		Instance = null;
+		EntityCodeKey = null;
 		var json = JsonConvert.SerializeObject(new Preferences());
 
 		Directory.CreateDirectory(PreferenceFolder);
