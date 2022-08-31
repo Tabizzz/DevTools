@@ -27,7 +27,7 @@ internal class TileFinder : IGui
 	{
 		if (Main.gameMenu || !Open || !HerosModCrossMod.TileFinder ||  !Begin("Tile Finder", ref Open)) return;
 
-		TextColored(Color.Red.ToVector4().Convert(), "Warning!");
+		TextColored(Color.Red.ToVector4(), "Warning!");
 		TextWrapped("This tool can be slow");
 
 		if (finding) BeginDisabled();
@@ -118,8 +118,7 @@ public class TileFinderSelector : IGui<ImDrawListPtr>
 			drawList.AddHitBox(new Rectangle((int)world.X, (int)world.Y, 16, 16), Color.Black, Color.White);
 		}
 	}
-
-
+	
 	public void Load(Mod mod)
 	{
 		InfoWindow.Fronts.Add(this);

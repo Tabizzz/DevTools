@@ -1,4 +1,4 @@
-global using static ImGuiNET.ImGui;
+﻿global using static ImGuiNET.ImGui;
 using DevTools.CrossMod;
 using Newtonsoft.Json;
 using System.IO;

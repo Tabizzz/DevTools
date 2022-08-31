@@ -2,6 +2,7 @@
 using ImGUI;
 using ImGuiNET;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 
 namespace DevTools;
@@ -39,7 +40,7 @@ internal class ServerAppLog : ModImGui
 		var getLog = Button("Request Logs");
 
 		Separator();
-		BeginChild("scrolling", ImVect2.Zero, false, ImGuiWindowFlags.HorizontalScrollbar);
+		BeginChild("scrolling", Vector2.Zero, false, ImGuiWindowFlags.HorizontalScrollbar);
 
 		if (clear)
 		{
@@ -49,7 +50,7 @@ internal class ServerAppLog : ModImGui
 		if (copy)
 			LogToClipboard();
 
-		PushStyleVar(ImGuiStyleVar.ItemSpacing, ImVect2.Zero);
+		PushStyleVar(ImGuiStyleVar.ItemSpacing, Vector2.Zero);
 
 		foreach (var log in Logs.ToArray())
 		{

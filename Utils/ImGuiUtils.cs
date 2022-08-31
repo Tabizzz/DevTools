@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.Reflection;
+using Microsoft.Xna.Framework;
 
 namespace DevTools.Utils;
 
@@ -44,7 +45,6 @@ public class ImGuiUtils
 			PopItemWidth();
 			TextWrapped(field.Name + ": " + field.GetValue(target));
 		}
-		
 	}
 
 	public static void Overlay(ref int corner, ref bool open, Action content)
@@ -57,7 +57,7 @@ public class ImGuiUtils
 			var viewport = GetMainViewport();
 			var workPos = viewport.WorkPos; // Use work area to avoid menu-bar/task-bar, if any!
 			var workSize = viewport.WorkSize;
-			ImVect2 windowPos = default, windowPosPivot = default;
+			Vector2 windowPos = default, windowPosPivot = default;
 			windowPos.X = ((corner & 1) == 1) ? (workPos.X + workSize.X - pad) : (workPos.X + pad);
 			windowPos.Y = ((corner & 2) == 2) ? (workPos.Y + workSize.Y - pad) : (workPos.Y + pad);
 			windowPosPivot.X = ((corner & 1) == 1) ? 1.0f : 0.0f;
@@ -89,7 +89,7 @@ public class ImGuiUtils
 
 	public static void SimpleLayout<T>(ref bool open, ref T[] npc, string name, ref int selected, Func<T, bool> active, Func<T, string> display, Action<T> tabs, int buttonLines, Action<T> buttons, Action Options = null)
 	{
-		SetNextWindowSize(new ImVect2(500, 500), ImGuiCond.FirstUseEver);
+		SetNextWindowSize(new Vector2(500, 500), ImGuiCond.FirstUseEver);
 		if (Begin($"{name}", ref open, ImGuiWindowFlags.MenuBar))
 		{
 			if (BeginMenuBar())
@@ -105,7 +105,7 @@ public class ImGuiUtils
 			}
 
 			{
-				BeginChild("left pane", new ImVect2(200, 0), true);
+				BeginChild("left pane", new Vector2(200, 0), true);
 				for (var i = 0; i < npc.Length - 1; i++)
 				{
 					if (active(npc[i]) && Selectable($"{display(npc[i])}({i})", selected == i))
@@ -121,7 +121,7 @@ public class ImGuiUtils
 				BeginGroup();
 				var select = selected;
 
-				BeginChild("item view", new ImVect2(0, -GetFrameHeightWithSpacing() * buttonLines));
+				BeginChild("item view", new Vector2(0, -GetFrameHeightWithSpacing() * buttonLines));
 				Text($"{name}: {select}");
 				Separator();
 				if (BeginTabBar("##Tabs", ImGuiTabBarFlags.TabListPopupButton))

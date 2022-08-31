@@ -30,7 +30,7 @@ public class NpcExplorer : IGui
 
 	bool ignore_immune;
 
-	ImVect2 imvect2;
+	Vector2 Vector2;
 
 	internal static bool f_public = true;
 
@@ -46,7 +46,10 @@ public class NpcExplorer : IGui
 
 	public void Gui()
 	{
-		if (Main.gameMenu || !Open || !HerosModCrossMod.NpcExplorer) return;
+		if (Main.gameMenu || !Open || !HerosModCrossMod.NpcExplorer)
+		{
+			_FrameTimer = 0; return;
+		}
 
 		ImGuiUtils.SimpleLayout(ref Open, ref Main.npc, "NPC Explorer", ref Selected,
 		n => n.active,
@@ -225,13 +228,13 @@ public class NpcExplorer : IGui
 				InputInt("Time", ref current_add_buff_time);
 				if (current_add_buff_time <= 0) current_add_buff_time = 1;
 				var tex = TextureBinder.buff[current_add_buff];
-				Image(tex.ptr, new ImVect2(20, 20));
+				Image(tex.ptr, new Vector2(20, 20));
 				SameLine();
 				TextWrapped(Lang.GetBuffName(current_add_buff));
 				TextWrapped(Lang.GetBuffDescription(current_add_buff).Replace("%", "%%"));
 				if (n.buffImmune[current_add_buff])
 				{
-					TextColored(Color.Red.ToVector4().Convert(), "npc is immune to this buff");
+					TextColored(Color.Red.ToVector4(), "npc is immune to this buff");
 					Checkbox("Ignore immune", ref ignore_immune);
 					if (ignore_immune)
 						n.buffImmune[current_add_buff] = false;
@@ -258,10 +261,10 @@ public class NpcExplorer : IGui
 					{
 
 						var tex = TextureBinder.buff[n.buffType[i]];
-						Image(tex.ptr, new ImVect2(20, 20));
+						Image(tex.ptr, new Vector2(20, 20));
 						SameLine();
 						var colo = Main.debuff[n.buffType[i]] ? Color.IndianRed.ToVector4() : Color.Green.ToVector4();
-						TextColored(colo.Convert(), $"{Lang.GetBuffName(n.buffType[i])}({n.buffType[i]}):");
+						TextColored(colo, $"{Lang.GetBuffName(n.buffType[i])}({n.buffType[i]}):");
 						Indent();
 						TextWrapped(Lang.GetBuffDescription(n.buffType[i]));
 						TextWrapped($"Index: {i}");
@@ -293,15 +296,7 @@ public class NpcExplorer : IGui
 			if (AnimateNpcTexture)
 			{
 				_FrameTimer++;
-				if (_FrameTimer > 5)
-				{
-					_FrameTimer = 0;
-					_NpcTextureFrame++;
-					if (_NpcTextureFrame > texture.frames)
-					{
-						_NpcTextureFrame = 1;
-					}
-				}
+				_NpcTextureFrame = _FrameTimer / 5 % texture.frames + 1;
 			}
 			EndTabItem();
 		}
@@ -369,18 +364,13 @@ public class NpcExplorer : IGui
 
 			SliderInt("life", ref n.life, 0, n.lifeMax, n.life + "/" + n.lifeMax);
 
-			imvect2 = n.position.Convert();			
-			InputFloat2("position", ref imvect2);
-			n.position = imvect2.Convert();
+			InputFloat2("position", ref n.position);
 
-			imvect2 = n.velocity.Convert();
-			InputFloat2("velocity", ref imvect2);
-			n.velocity = imvect2.Convert();
+			InputFloat2("velocity", ref n.velocity);
 
-
-			imvect2 = n.Size.Convert();
-			InputFloat2("Size (hitbox)", ref imvect2);
-			n.Size = imvect2.Convert();
+			Vector2 = n.Size;
+			InputFloat2("Size (hitbox)", ref Vector2);
+			n.Size = Vector2;
 
 			TextWrapped("reallife: ");
 			SameLine();

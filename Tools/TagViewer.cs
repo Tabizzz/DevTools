@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -52,7 +53,7 @@ internal class TagViewer : IGui
 
 	public void Gui()
 	{
-		SetNextWindowSize(new ImVect2(430, 450), ImGuiCond.FirstUseEver);
+		SetNextWindowSize(new Vector2(430, 450), ImGuiCond.FirstUseEver);
 		if(needfocus)
 		{
 			needfocus = false;
@@ -72,7 +73,7 @@ internal class TagViewer : IGui
 		}
 		else
 		{
-			PushStyleVar(ImGuiStyleVar.FramePadding, new ImVect2(2, 2));
+			PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(2, 2));
 
 			if(BeginTable("slit", 2, ImGuiTableFlags.BordersOuter | ImGuiTableFlags.Resizable))
 			{
