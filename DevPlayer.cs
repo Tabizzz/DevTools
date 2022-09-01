@@ -45,6 +45,13 @@ internal class DevPlayer : ModPlayer
 					Decompiler.AddType(npc.ModProjectile);
 				}
 			}
+
+			var tileP = Main.MouseWorld.ToTileCoordinates();
+			var tile = Framing.GetTileSafely(tileP);
+			if(tile.HasTile && ModContent.GetModTile(tile.TileType) is ModTile mtile)
+			{
+				Decompiler.AddType(mtile);
+			}
 		}
 	}
 }
