@@ -1,6 +1,7 @@
 ﻿using DevTools.Editors;
 using DevTools.Explorers;
 using DevTools.Tools;
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DevTools;
@@ -18,6 +19,15 @@ public class ToolsPref
 {
 	public TileFinderPref tileFinder { get; set; } = new();
 	public WorldInfoPref worldInfo { get; set; } = new();
+	public ColorBlindPref colorBlindPref { get; set; } = new();
+}
+
+public class ColorBlindPref
+{
+	public bool Open { get => ColorBlind.Open; set => ColorBlind.Open = value; }
+	public Vector3 top { get => ColorBlind.topRow; set => ColorBlind.topRow = value; }
+	public Vector3 mid { get => ColorBlind.midRow; set => ColorBlind.midRow = value; }
+	public Vector3 bot { get => ColorBlind.botRow; set => ColorBlind.botRow = value; }
 }
 
 public class WorldInfoPref

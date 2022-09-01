@@ -18,6 +18,8 @@ internal class Tools : IGui
 		if (HerosModCrossMod.WorldInfo)
 			Checkbox("World Info", ref WorldInfo.Open);
 
+		Checkbox("ColorBlind simulator", ref ColorBlind.Open);
+
 		TreePop();
 	}
 
