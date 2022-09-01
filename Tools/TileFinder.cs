@@ -25,61 +25,64 @@ internal class TileFinder : IGui
 
 	public void Gui()
 	{
-		if (Main.gameMenu || !Open || !HerosModCrossMod.TileFinder ||  !Begin("Tile Finder", ref Open)) return;
+		if (Main.gameMenu || !Open || !HerosModCrossMod.TileFinder) return;
 
-		TextColored(Color.Red.ToVector4(), "Warning!");
-		TextWrapped("This tool can be slow");
-
-		if (finding) BeginDisabled();
-		
-		InputInt("Tile ID", ref tileId);
-		if (tileId < 0) tileId = 0;
-		if (tileId >= TileLoader.TileCount) tileId = TileLoader.TileCount - 1;
-
-		Checkbox("Check Style", ref TileFrameX);
-		if (TileFrameX)
+		if (Begin("Tile Finder", ref Open))
 		{
+			TextColored(Color.Red.ToVector4(), "Warning!");
+			TextWrapped("This tool can be slow");
+
+			if (finding) BeginDisabled();
+
+			InputInt("Tile ID", ref tileId);
+			if (tileId < 0) tileId = 0;
+			if (tileId >= TileLoader.TileCount) tileId = TileLoader.TileCount - 1;
+
+			Checkbox("Check Style", ref TileFrameX);
+			if (TileFrameX)
+			{
+				SameLine();
+				SetNextItemWidth(Math.Min(100, GetContentRegionAvail().X));
+				InputInt("Style", ref iTileFrameX);
+			}
+
+			Checkbox("Check Alternate", ref TileFrameY);
+			if (TileFrameY)
+			{
+				SameLine();
+				SetNextItemWidth(Math.Min(100, GetContentRegionAvail().X));
+				InputInt("Alternate", ref iTileFrameY);
+			}
+
+
+			var needfind = Button("Find Tile");
+
 			SameLine();
-			SetNextItemWidth(Math.Min(100, GetContentRegionAvail().X));
-			InputInt("Style", ref iTileFrameX);
+			Checkbox("Find closest", ref closest);
+
+			if (finding)
+			{
+				EndDisabled();
+				Text($"Finding tile {findid}...");
+			}
+
+			if (find)
+			{
+				var world = findPos.ToWorldCoordinates();
+				TextWrapped($"Tile {findid} find at position {findPos.X}, {findPos.Y}. {(int)(Vector2.Distance(Main.player[Main.myPlayer].position, world) / 16)} tiles from you");
+				if (Main.tileFrameImportant[findid])
+					TextWrapped($"Style: {findStyle.X}, Alternate: {findStyle.Y}");
+
+				if (Button("Teleport"))
+					Main.player[Main.myPlayer].position = world - (new Vector2(0, 16 * 3));
+			}
+			if (findTime > 0)
+				TextWrapped($"Last find time: {findTime}ms");
+
+			if (needfind) StartFind();
 		}
-
-		Checkbox("Check Alternate", ref TileFrameY);
-		if (TileFrameY)
-		{
-			SameLine();
-			SetNextItemWidth(Math.Min(100, GetContentRegionAvail().X));
-			InputInt("Alternate", ref iTileFrameY);
-		}
-
-
-		var needfind = Button("Find Tile");
-		
-		SameLine();
-		Checkbox("Find closest", ref closest);
-
-		if (finding)
-		{
-			EndDisabled();
-			Text($"Finding tile {findid}...");
-		}
-
-		if(find)
-		{
-			var world = findPos.ToWorldCoordinates();
-			TextWrapped($"Tile {findid} find at position {findPos.X}, {findPos.Y}. {(int)(Vector2.Distance(Main.player[Main.myPlayer].position, world) /16)} tiles from you");
-			if (Main.tileFrameImportant[findid])
-			TextWrapped($"Style: {findStyle.X}, Alternate: {findStyle.Y}");
-
-			if (Button("Teleport"))
-				Main.player[Main.myPlayer].position = world - (new Vector2(0, 16 * 3));
-		}
-		if(findTime > 0)
-			TextWrapped($"Last find time: {findTime}ms");
-
 		End(); 
 
-		if(needfind) StartFind();
 	}
 
 	private void StartFind()

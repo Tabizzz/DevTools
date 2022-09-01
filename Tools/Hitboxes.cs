@@ -15,15 +15,15 @@ internal class Hitboxes :  IGui
 
 	public void Gui()
 	{
-		if (!Open || !Begin("Hitboxes", ref Open)) return;
-
-		Checkbox("NPC", ref Npc);
-		SameLine();
-		Checkbox("Projectiles", ref Projectiles);
-		SameLine();
-		Checkbox("Players", ref Players);
-
-
+		if(!Open) return;
+		if (Begin("Hitboxes", ref Open))
+		{
+			Checkbox("NPC", ref Npc);
+			SameLine();
+			Checkbox("Projectiles", ref Projectiles);
+			SameLine();
+			Checkbox("Players", ref Players);
+		}
 		End();
 	}
 

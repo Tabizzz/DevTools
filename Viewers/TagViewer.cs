@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
-namespace DevTools.Tools;
+namespace DevTools.Viewers;
 
 internal class TagViewer : IGui
 {
@@ -59,8 +59,8 @@ internal class TagViewer : IGui
 			needfocus = false;
 			SetNextWindowFocus();
 		}
-
-		if (!Open || !Begin("Tag Viewer", ref Open))
+		if (!Open) return;
+		if (!Begin("Tag Viewer", ref Open))
 		{
 			End();
 			return;
@@ -69,7 +69,6 @@ internal class TagViewer : IGui
 		if(tag == null)
 		{
 			TextWrapped("Use other tools to open a TagCompund here.");
-
 		}
 		else
 		{

@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ModLoader.Default;
 using DevTools.Tools;
+using DevTools.Viewers;
 
 namespace DevTools.Editors;
 
