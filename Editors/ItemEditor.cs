@@ -114,6 +114,10 @@ internal class ItemEditor : IGui
 			if (f_static) flags |= BindingFlags.Static;
 
 			Separator();
+			if (Button("Show code"))
+			{
+				Decompiler.AddType(global);
+			}
 			var t = global.GetType();
 			if (global is UnloadedGlobalItem unloaded)
 			{
@@ -181,6 +185,10 @@ internal class ItemEditor : IGui
 			if (f_static) flags |= BindingFlags.Static;			
 			
 			Separator();
+			if(Button("Show code"))
+			{
+				Decompiler.AddType(mitem);
+			}
 			var t = mitem.GetType();
 			if (mitem is UnloadedItem ui)
 			{

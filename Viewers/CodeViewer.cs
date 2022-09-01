@@ -35,7 +35,7 @@ public class CodeViewer : IGui
 		if(!Open || editors.Count == 0) { return; }
 
 		SetNextWindowSize(Vector2.One * 500, ImGuiCond.FirstUseEver);
-		if(!Begin("Code Viewer", ImGuiWindowFlags.NoCollapse))
+		if(!Begin("Code Viewer"))
 		{
 			End();
 			return;
@@ -51,6 +51,8 @@ public class CodeViewer : IGui
 				PushID(item.Key);
 				if(BeginTabItem(name, ref open))
 				{
+					var pos = item.Value.CursorPosition;
+					Text($"{pos.mLine,6}:{pos.mColumn,-6} {item.Value.TotalLines,6} lines  | C# | {item.Key}");
 					PushFont(GetIO().Fonts.Fonts[0]);
 					item.Value.Render(name);
 					PopFont();
