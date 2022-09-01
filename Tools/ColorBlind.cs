@@ -88,8 +88,8 @@ internal class ColorBlind : IGui
 			var newEffect = new Ref<Effect>(mod.Assets.Request<Effect>("fx/ColorBlind", AssetRequestMode.ImmediateLoad).Value);
 
 			Filters.Scene["DevTools:ColorBlind"] = new Filter(new ScreenShaderData(newEffect, "ColorBlind"), EffectPriority.VeryHigh);
-			midRow = Vector3.UnitX * 0.494207f + Vector3.UnitZ * 1.24827f;
 			topRow = Vector3.UnitX;
+			midRow = Vector3.UnitY;
 			botRow = Vector3.UnitZ;
 			SetShader();
 		}
