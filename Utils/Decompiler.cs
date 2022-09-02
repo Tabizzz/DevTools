@@ -91,22 +91,19 @@ internal class Decompiler : ILoadable
 public class ModResolver : IAssemblyResolver
 {
 	readonly IAssemblyResolver resolver;
-	private Mod mod;
 	private string dir;
 
 	internal static Dictionary<string, PEFile> cachePEs;
 
 	public ModResolver(Mod mod, DecompilerSettings settings)
 	{
-		this.mod = mod;
 		var PE = Decompiler.PEForMod(mod, settings);
 		var file = Assembly.GetEntryAssembly().Location;
 		resolver = new UniversalAssemblyResolver(file, settings.ThrowOnAssemblyResolveErrors,
 			PE.DetectTargetFrameworkId(), PE.DetectRuntimePack(),
 			settings.LoadInMemory ? PEStreamOptions.PrefetchMetadata : PEStreamOptions.Default,
 			settings.ApplyWindowsRuntimeProjections ? MetadataReaderOptions.ApplyWindowsRuntimeProjections : MetadataReaderOptions.None);
-		var tmod = Assembly.GetEntryAssembly().Location;
-		dir = Path.Combine(Path.GetDirectoryName(tmod), "Libraries");
+		dir = Path.Combine(Path.GetDirectoryName(file), "Libraries");
 	}
 
 	public PEFile? Resolve(IAssemblyReference reference)

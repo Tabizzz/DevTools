@@ -12,7 +12,6 @@ namespace DevTools.Tools;
 
 internal class ColorBlind : IGui
 {
-	public static bool Enable = false;
 	internal static bool Open = true;
 
 	internal static Vector3 topRow = Vector3.UnitX;
@@ -22,21 +21,19 @@ internal class ColorBlind : IGui
 	public void Gui()
 	{
 		if (!Open) return;
-		if (Begin("ColorBlind"))
+		if (Begin("ColorBlind", ref Open))
 		{
 			TextWrapped("This is a color blindness simulation tool, you can change the transformation matrix to get different results");
 			var inuse = Filters.Scene["DevTools:ColorBlind"].IsInUse();
 			Checkbox("Is in use", ref inuse);
 			if(Button("Activate"))
 			{
-				Enable = true;
 				Filters.Scene["DevTools:ColorBlind"].GetShader().UseColor(Color.White);
 				Filters.Scene.Activate("DevTools:ColorBlind", Main.LocalPlayer.position);
 			}
 			SameLine();
 			if (Button("Deactivate"))
 			{
-				Enable = false;
 				Filters.Scene["DevTools:ColorBlind"].Deactivate();
 			}
 			Separator();
@@ -112,16 +109,5 @@ internal class ColorBlind : IGui
 		{
 
 		}
-	}
-}
-
-internal class ShaderModSceneEffect : ModSceneEffect
-{
-	public override SceneEffectPriority Priority => SceneEffectPriority.BossHigh;
-
-	public override bool IsSceneEffectActive(Player player)
-	{
-		player.ManageSpecialBiomeVisuals("DevTools:ColorBlind", ColorBlind.Enable);
-		return ColorBlind.Enable;
 	}
 }

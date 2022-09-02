@@ -18,3 +18,4 @@ Notes:
 	Currently the changes to the world and the npcs only works in singleplayer
 
 [url=https://github.com/Tabizzz/DevTools]Github[/url]
+[url=https://discord.gg/e7psjmBP7t]Discord[/url]

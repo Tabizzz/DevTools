@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.DataStructures;
+using MonoMod.Cil;
 
 namespace DevTools.Viewers;
 
@@ -21,6 +23,7 @@ internal class TagViewer : IGui
 		tag = tagcompound;
 		ConvertListToTag(tag);
 	}
+
 
 	private static void ConvertListToTag(TagCompound rtag)
 	{

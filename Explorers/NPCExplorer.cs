@@ -1,4 +1,4 @@
-﻿using Terraria;
+﻿ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ImGUI.Renderer;
@@ -9,6 +9,10 @@ using Microsoft.Xna.Framework;
 using Terraria.Audio;
 using System.Reflection;
 using DevTools.CrossMod;
+using DevTools.Viewers;
+using Terraria.ModLoader.Default;
+using Terraria.ModLoader.IO;
+using System.Collections.Generic;
 
 namespace DevTools.Explorers;
 
@@ -43,6 +47,7 @@ public class NpcExplorer : IGui
 	internal static bool f_editable = true;
 
 	internal static bool f_readonly;
+	private int Selected_global;
 
 	public void Gui()
 	{
@@ -60,8 +65,12 @@ public class NpcExplorer : IGui
 			TabDetails(n);
 			TabAi(n);
 			TabBuffs(n);
-			TabTexture(n);
-			TabSound(n);
+			TabMisc(n);
+			if (n.ModNPC is ModNPC npc)
+			{
+				TabModNPC(npc);
+			}
+			TabGlobals(n);
 			TabFields(n);
 			EndTabBar();
 			HasHitbox = true;
@@ -70,6 +79,161 @@ public class NpcExplorer : IGui
 		Buttons,
 		Options
 		);
+	}
+
+	private void TabModNPC(ModNPC mnpc)
+	{
+		if (BeginTabItem("Mod NPC"))
+		{
+			TextWrapped("this is a mod npc field editor, here you can see all the fields of the ModNPC class, this tab is made for testing purposes only, what you change here will not be saved unless it is a property found in the other tabs");
+			var flags = BindingFlags.Default;
+
+			if (Button("Options"))
+				OpenPopup("FieldOptions");
+
+			if (BeginPopup("FieldOptions"))
+			{
+				MenuItem("Public", null, ref f_public);
+				MenuItem("Private", null, ref f_private);
+				MenuItem("Instance", null, ref f_instance);
+				MenuItem("Static", null, ref f_static);
+				MenuItem("Editable", null, ref f_editable);
+				MenuItem("Readonly", null, ref f_readonly);
+				EndPopup();
+			}
+
+			if (f_public) flags |= BindingFlags.Public;
+			if (f_instance) flags |= BindingFlags.Instance;
+			if (f_private) flags |= BindingFlags.NonPublic;
+			if (f_static) flags |= BindingFlags.Static;
+
+			Separator();
+			if (Button("Show code"))
+			{
+				Decompiler.AddType(mnpc);
+			}
+			var t = mnpc.GetType();
+
+			foreach (var item in t.GetFields(flags))
+			{
+				var editable =
+					f_editable &&
+					(item.FieldType == ImGuiUtils.Bool || item.FieldType == ImGuiUtils.Int || item.FieldType == ImGuiUtils.Int) &&
+					!item.IsInitOnly && !item.IsLiteral;
+
+				var readon =
+					f_readonly &&
+					(item.IsInitOnly || item.IsLiteral);
+
+				if (editable || readon)
+					ImGuiUtils.FieldEdit(item, mnpc);
+			}
+			
+			EndTabItem();
+		}
+	}
+
+	private void TabGlobals(NPC npc)
+	{
+		var l = npc.Globals.Length;
+		if (l > 0 && BeginTabItem("Global NPCS"))
+		{
+			TextWrapped("Choose a global npc to see");
+
+			if (BeginCombo("Global npc", npc.Globals[Selected_global].Instance.Name))
+			{
+				for (int i = 0; i < l; i++)
+				{
+					var current = npc.Globals[i].Instance;
+					if (Selectable(current.Name, i == Selected_global))
+						Selected_global = i;
+				}
+
+				EndCombo();
+			}
+			var global = npc.Globals[Selected_global].Instance;
+
+			TextWrapped($"Global npc from: {global.Mod.Name}");
+
+
+			if (Selected_global < 0) Selected_global = 0;
+			if (Selected_global >= l) Selected_global = l - 1;
+
+			var flags = BindingFlags.Default;
+
+			if (Button("Options"))
+				OpenPopup("FieldOptions");
+
+			if (BeginPopup("FieldOptions"))
+			{
+				MenuItem("Public", null, ref f_public);
+				MenuItem("Private", null, ref f_private);
+				MenuItem("Instance", null, ref f_instance);
+				MenuItem("Static", null, ref f_static);
+				MenuItem("Editable", null, ref f_editable);
+				MenuItem("Readonly", null, ref f_readonly);
+				EndPopup();
+			}
+
+			if (f_public) flags |= BindingFlags.Public;
+			if (f_instance) flags |= BindingFlags.Instance;
+			if (f_private) flags |= BindingFlags.NonPublic;
+			if (f_static) flags |= BindingFlags.Static;
+
+			Separator();
+			if (Button("Show code"))
+			{
+				Decompiler.AddType(global);
+			}
+			var t = global.GetType();
+			if (global is UnloadedGlobalNPC unloaded)
+			{
+				var data = (List<TagCompound>)t.GetField("data", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(global);
+
+				TextWrapped("you can see the unloaded data in the tag viewer");
+				if (Button("Open in tag viewer"))
+					TagViewer.OpenTag(data, t => t.GetString("name"));
+			}
+			/*else if (global is SavePreview save)
+			{
+				var tag = ItemIO.Save(npc);
+				TextWrapped("you can see what the item will save in tag viewer");
+				if (Button("Open in tag viewer"))
+					TagViewer.OpenTag(tag);
+			}*/
+			else
+			{
+
+				foreach (var gitem in t.GetFields(flags))
+				{
+					var editable =
+						f_editable &&
+						(gitem.FieldType == ImGuiUtils.Bool || gitem.FieldType == ImGuiUtils.Int || gitem.FieldType == ImGuiUtils.Int) &&
+						!gitem.IsInitOnly && !gitem.IsLiteral;
+
+					var readon =
+						f_readonly &&
+						(gitem.IsInitOnly || gitem.IsLiteral);
+
+					if (editable || readon)
+						ImGuiUtils.FieldEdit(gitem, global);
+				}
+			}
+
+
+			EndTabItem();
+		}
+	}
+
+	private void TabMisc(NPC n)
+	{
+		if (BeginTabItem("Misc"))
+		{
+			TabTexture(n);
+			Separator();
+			TabSound(n);
+			EndTabItem();
+		}
 	}
 
 	private void Options()
@@ -162,30 +326,25 @@ public class NpcExplorer : IGui
 
 	void TabSound(NPC n)
 	{
-		if (BeginTabItem("Sounds"))
+		SoundStyle sound;
+		if (n.HitSound.HasValue)
 		{
-			SoundStyle sound;
-			if(n.HitSound.HasValue)
-			{
-				sound = n.HitSound.Value;
-				ShowSoundStats(sound);
-			}
-			else
-			{
-				TextWrapped("npc dont have a HitSound");
-			}
-			Separator();
-			
-			if(n.DeathSound.HasValue)
-			{
-				sound = n.DeathSound.Value;
-				ShowSoundStats(sound);
-			}
-			else
-			{
-				TextWrapped("npc dont have a DeathSound");
-			}
-			EndTabItem();
+			sound = n.HitSound.Value;
+			ShowSoundStats(sound);
+		}
+		else
+		{
+			TextWrapped("npc dont have a HitSound");
+		}
+
+		if (n.DeathSound.HasValue)
+		{
+			sound = n.DeathSound.Value;
+			ShowSoundStats(sound);
+		}
+		else
+		{
+			TextWrapped("npc dont have a DeathSound");
 		}
 	}
 
@@ -285,20 +444,16 @@ public class NpcExplorer : IGui
 
 	void TabTexture(NPC n)
 	{
-		if (BeginTabItem("Texture"))
-		{
-			var texture = TextureBinder.npcs[n.type];
+		var texture = TextureBinder.npcs[n.type];
 
-			Image(texture.ptr, texture.Transform(100), texture.Uv0(_NpcTextureFrame), texture.Uv1(_NpcTextureFrame));
-			Separator();
-			SliderInt("Frame", ref _NpcTextureFrame, 1, texture.frames, $"{_NpcTextureFrame} / {texture.frames}");
-			Checkbox("Animate", ref AnimateNpcTexture);
-			if (AnimateNpcTexture)
-			{
-				_FrameTimer++;
-				_NpcTextureFrame = _FrameTimer / 5 % texture.frames + 1;
-			}
-			EndTabItem();
+		Image(texture.ptr, texture.Transform(100), texture.Uv0(_NpcTextureFrame), texture.Uv1(_NpcTextureFrame));
+		Separator();
+		SliderInt("Frame", ref _NpcTextureFrame, 1, texture.frames, $"{_NpcTextureFrame} / {texture.frames}");
+		Checkbox("Animate", ref AnimateNpcTexture);
+		if (AnimateNpcTexture)
+		{
+			_FrameTimer++;
+			_NpcTextureFrame = _FrameTimer / 5 % texture.frames + 1;
 		}
 	}
 
