@@ -14,6 +14,7 @@ public class CodeViewer : IGui
 
 	public static Dictionary<string, TextEditor> editors;
 	public static Dictionary<string, string> names;
+	private static bool needFocus;
 
 	internal static void Add(string name, string v, string code)
 	{
@@ -28,6 +29,7 @@ public class CodeViewer : IGui
 		editor.ReadOnly = true;
 		editors.Add(v, editor);
 		names.Add(v, name);
+		needFocus = true;
 	}
 
 	public void Gui()
@@ -35,6 +37,11 @@ public class CodeViewer : IGui
 		if(!Open || editors.Count == 0) { return; }
 
 		SetNextWindowSize(Vector2.One * 500, ImGuiCond.FirstUseEver);
+		if(needFocus)
+		{
+			needFocus = false;
+			SetNextWindowFocus();
+		}
 		if(!Begin("Code Viewer"))
 		{
 			End();
