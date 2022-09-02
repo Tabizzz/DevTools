@@ -10,4 +10,6 @@ internal static class Nets
 	public static IAppLog AppLogNet => Net<IAppLog>.Proxy;
 
 	public static ITileFinder TileFinderNet => Net<ITileFinder>.Proxy;
+
+	public static ITimeStep TimeStepNet => Net<ITimeStep>.Proxy;
 }
