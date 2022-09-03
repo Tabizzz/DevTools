@@ -18,11 +18,13 @@ public interface ITileFinder
 
 	void FindResult(Vector2 position, int ms, Vector2 style);
 
+	void FindError();
+
+
 	private class Impl : ModHandler<ITileFinder>, ITileFinder
 	{
 		public override ITileFinder Handler => this;
 
-		[RunIn(HandlerMode.Server)]
 		public void Find(bool closest, int tile)
 		{
 			if(Main.netMode is NetmodeID.Server or NetmodeID.SinglePlayer)
@@ -34,7 +36,6 @@ public interface ITileFinder
 			}
 		}
 
-		[RunIn(HandlerMode.Server)]
 		public void FindStyle(bool closest, int tile, bool x, bool y, int sx, int sy)
 		{
 			if (Main.netMode is NetmodeID.Server or NetmodeID.SinglePlayer)
@@ -135,7 +136,6 @@ public interface ITileFinder
 			return false;
 		}
 
-		[RunIn(HandlerMode.Client)]
 		public void FindResult(Vector2 position, int ms, Vector2 style)
 		{
 			if (Main.netMode is NetmodeID.MultiplayerClient or NetmodeID.SinglePlayer)
@@ -148,7 +148,6 @@ public interface ITileFinder
 			}
 		}
 
-		[RunIn(HandlerMode.Client)]
 		public void FindError()
 		{
 			if (Main.netMode is NetmodeID.MultiplayerClient or NetmodeID.SinglePlayer)
@@ -157,6 +156,4 @@ public interface ITileFinder
 			}
 		}
 	}
-
-	void FindError();
 }

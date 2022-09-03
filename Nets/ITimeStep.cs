@@ -5,6 +5,7 @@ using Terraria.ID;
 
 namespace DevTools.Nets;
 
+[Broadcast]
 public interface ITimeStep
 {
 	void DoStep(int stepTicks);
@@ -18,31 +19,16 @@ public interface ITimeStep
 		public void DoStep(int stepTicks)
 		{
 			TimeStep.DoStep(stepTicks);
-
-			if (Main.netMode == NetmodeID.Server)
-			{
-				TimeStepNet.DoStep(stepTicks);
-			}
 		}
 
 		public void ProjPause(bool pre)
 		{
 			TimeStep.projPause = pre;
-
-			if (Main.netMode == NetmodeID.Server)
-			{
-				TimeStepNet.ProjPause(pre);
-			}
 		}
 
 		public void WorldPause(bool pre)
 		{
 			TimeStep.worldPause = pre;
-
-			if (Main.netMode == NetmodeID.Server)
-			{
-				TimeStepNet.WorldPause(pre);
-			}
 		}
 	}
 }

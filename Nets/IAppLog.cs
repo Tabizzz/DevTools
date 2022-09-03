@@ -14,7 +14,6 @@ public interface IAppLog
 	{
 		public override IAppLog Handler => this;
 
-		[RunIn(HandlerMode.ClientOnly)]
 		public void Logs(string[] logs)
 		{
 			if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -24,7 +23,6 @@ public interface IAppLog
 			}
 		}
 
-		[RunIn(HandlerMode.ServerOnly)]
 		public void Request(int start)
 		{
 			if(Main.netMode == NetmodeID.Server && start < ServerAppLog.Logs.Count)

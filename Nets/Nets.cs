@@ -12,4 +12,6 @@ internal static class Nets
 	public static ITileFinder TileFinderNet => Net<ITileFinder>.Proxy;
 
 	public static ITimeStep TimeStepNet => Net<ITimeStep>.Proxy;
+
+	public static IDevTools DTN => Net<IDevTools>.Proxy;
 }
