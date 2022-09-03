@@ -4,7 +4,6 @@ using ICSharpCode.Decompiler.TypeSystem;
 using ImGuiNET;
 using ImGuiNET.Extras;
 using Microsoft.Xna.Framework;
-using System;
 using System.Linq;
 using Terraria.ModLoader;
 

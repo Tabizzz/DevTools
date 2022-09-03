@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.DataStructures;
-using MonoMod.Cil;
 
 namespace DevTools.Viewers;
 
