@@ -12,7 +12,7 @@ namespace DevTools.Tools;
 
 internal class ModAssembly : IGui
 {
-	public static bool Open = true;
+	public static bool Open ;
 	public static Mod selected_mod;
 	private FullTypeName seleted_item;
 	TextEditor editor;
@@ -100,14 +100,17 @@ internal class ModAssembly : IGui
 	public void Load(Mod mod)
 	{
 		InfoWindow.Guis.Add(this);
-		editor = new();
-		editor.ReadOnly = true;
-		editor.Text = "Choose an item from the left pane to see the code";
+		editor = new()
+		{
+			ReadOnly = true,
+			Text = "Choose an item from the left pane to see the code"
+		};
 	}
 
 	public void Unload()
 	{
 		InfoWindow.Guis.Remove(this);
 		editor.Dispose();
+		selected_mod = null;
 	}
 }

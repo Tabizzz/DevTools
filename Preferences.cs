@@ -4,7 +4,7 @@ using DevTools.Tools;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
-namespace DevTools;
+namespace DevTools.Data;
 
 [JsonObject(MemberSerialization.OptOut)]
 public class Preferences
@@ -20,6 +20,12 @@ public class ToolsPref
 	public TileFinderPref tileFinder { get; set; } = new();
 	public WorldInfoPref worldInfo { get; set; } = new();
 	public ColorBlindPref colorBlindPref { get; set; } = new();
+	public ModAssemblyPref modAssemblyPref { get; set; } = new();
+}
+
+public class ModAssemblyPref
+{
+	public bool Open { get => ModAssembly.Open; set => ModAssembly.Open = value; }
 }
 
 public class ColorBlindPref

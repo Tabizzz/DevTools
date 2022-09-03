@@ -1,5 +1,6 @@
 ﻿global using static ImGuiNET.ImGui;
 using DevTools.CrossMod;
+using DevTools.Data;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
 using System.IO;
