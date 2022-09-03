@@ -22,13 +22,15 @@ internal class ModAssembly : IGui
 		if (!Open) return;
 		if(Begin("Mod Assembly", ref Open))
 		{
-			BeginGroup();
-			foreach (var cmod in ModLoader.Mods)
+			if (BeginChild("tree", new Vector2(250, 0), true, ImGuiWindowFlags.HorizontalScrollbar))
 			{
-				Show(cmod);
-			}
+				foreach (var cmod in ModLoader.Mods)
+				{
+					Show(cmod);
+				}
 
-			EndGroup();
+				EndChild();
+			}
 			
 			SameLine();
 			PushFont(GetIO().Fonts.Fonts[0]);
@@ -70,7 +72,7 @@ internal class ModAssembly : IGui
 
 	private void Show(ITypeDefinition item, CSharpDecompiler dec, Mod mod)
 	{
-		if(Selectable(item.Name, mod.Name == selected_mod?.Name && item.ReflectionName == seleted_item.ReflectionName))
+		if(Selectable(item.MetadataName, mod.Name == selected_mod?.Name && item.ReflectionName == seleted_item.ReflectionName))
 		{
 			selected_mod = mod;
 			seleted_item = new FullTypeName(item.ReflectionName);
