@@ -3,6 +3,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,7 @@ internal class Decompiler : ILoadable
 		CodeViewer.Add(modItem.Name + ".cs", name.ReflectionName + ".cs", code);
 	}
 
-	private static CSharpDecompiler DecompileMod(Mod mod)
+	internal static CSharpDecompiler DecompileMod(Mod mod)
 	{
 		if (decompilers.ContainsKey(mod.Name)) return decompilers[mod.Name];
 

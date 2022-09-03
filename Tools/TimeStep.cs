@@ -11,7 +11,7 @@ namespace DevTools.Tools;
 
 public class TimeStep : IGui
 {
-	public static bool Open = true;
+	public static bool Open;
 	internal static bool worldPause;
 	internal static bool projPause;
 	private static int stepTicks;
